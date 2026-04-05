@@ -5,6 +5,9 @@
 
   --logo-color: rgb(22, 58, 119);
 
+  --secondary-color-soft: rgb(241, 243, 254);
+  --hover-color: rgb(220, 226, 247);
+
   --default-button: rgb(22, 60, 120);
   --delete-button: rgb(171, 45, 37);
 }
@@ -47,7 +50,7 @@ p {
 }
 h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
-  color: var(--headline-text);
+  color: inherit;
 }
 
 #root, #__next {
@@ -58,4 +61,9 @@ h1, h2, h3, h4, h5, h6 {
 
 html, body {
   font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  height: 100vh;
+}
+
+#root {
+  height: 100%;
 }
