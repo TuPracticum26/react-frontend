@@ -1,13 +1,23 @@
-import { StrictMode } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createRoot } from 'react-dom/client'
-import "./App.css";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { routeTree } from '../routeTree.gen'
+import { StrictMode } from "react";
+import Header from "../Header/Header";
+import Login from "../Pages/Login";
+import Register from "../Pages/Register";
+import Test from "./Test";
+import "../App/App.css";
+import Home from "../Pages/Home.jsx";
 
-const router = createRouter({ routeTree })
+export default function App() {
+    return (
+        <BrowserRouter>
+            <Header />
 
-createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <RouterProvider router={router} />
-    </StrictMode>,
-);
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+            </Routes>
+        </BrowserRouter>
+    )
+}
