@@ -1,52 +1,23 @@
-import { useEffect, useState, StrictMode } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createRoot } from 'react-dom/client'
+import { StrictMode } from "react";
 import Header from "../Header/Header";
-import "./App.css";
+import Login from "../Pages/Login";
+import Register from "../Pages/Register";
+import Test from "./Test";
+import "../App/App.css";
+import Home from "../Pages/Home.jsx";
 
-function Test() {
-    const [testMessage, SetTestMessage] = useState([]);
-    
-    useEffect(() => {
-        async function testApi() {
-            const response = await fetch("/api/v1/users");
-            const data = await response.json();
-            console.log(data);
-            SetTestMessage(data);
-            return data;
-        }
-        testApi();
-    }, []);
-    
-    useEffect(() => {
-        console.log(testMessage);
-    }, [testMessage]);
-
+export default function App() {
     return (
-        <>
-            {testMessage.map((test, index) => (
-                <div
-                key={index}
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: '1rem'
-                }}
-                >
-                    <p>{test.id}</p>
-                    <p>{test.username}</p>
-                    <p>{test.role}</p>
-                </div>
-            ))}
-        </>
+        <BrowserRouter>
+            <Header />
+
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+            </Routes>
+        </BrowserRouter>
     )
-
 }
-
-
-createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <Header />
-        <Test/>
-    </StrictMode>,
-);
