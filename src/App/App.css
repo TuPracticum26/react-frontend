@@ -67,3 +67,12 @@ html, body {
 #root {
   height: 100%;
 }
+
+main > * {
+  height: 100%;
+}
+
+.RouterLink {
+  text-decoration: none;
+  color: inherit;
+}
