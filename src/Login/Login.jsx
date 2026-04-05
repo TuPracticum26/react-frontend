@@ -17,7 +17,7 @@ export default function Login() {
             console.log(res.data);
 
             localStorage.setItem('token', res.data.token);
-            window.location.href = '/';
+            window.location.href = '/dashboard';
 
         } catch (error) {
             console.error(error.response?.data || error.message);
