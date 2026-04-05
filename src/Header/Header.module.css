@@ -1,0 +1,79 @@
+.header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-shadow: 0px 0px 3px 1px gray;
+}
+
+.left-side {
+    align-items: center;
+    grid-column: 0;
+    justify-self: start;
+}
+
+.right-side {
+    grid-column: 3;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-self: end;
+}
+
+.company-name {
+    color: var(--logo-color);
+}
+
+.profile-pic {
+    border: 1px solid black;
+    border-radius: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-block: 0.3rem;
+    padding-left: 0.4rem;
+    padding-right: 0.3rem;
+    background-color: rgb(241, 243, 254);
+    border: 1px solid var(--default-button);
+}
+
+.profile-pic-icon {
+    min-width: 32px;
+    color: var(--default-button);
+}
+
+.search-bar-container {
+    position: relative;
+}
+
+.search-bar {
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(241, 243, 254);
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    min-width: 200px;
+}
+
+.search-result {
+    position: absolute;
+    bottom: -3rem;
+    border: 1px solid black;
+    width: 165px;
+    height: fit-content;
+    padding: 0.5rem;
+    background-color: #FFF;
+}
+
+.upload-btn {
+    border: none;
+    text-align: center;
+    padding-inline: 1rem;
+    padding-block: 0.25rem;
+    font-weight: 475;
+    border-radius: 7px;
+    font-size: 0.9rem;
+    color: #FFF;
+    background-color: var(--default-button);
+}
