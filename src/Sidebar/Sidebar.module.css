@@ -1,0 +1,66 @@
+h3 {
+    display: flex;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.title-icon {
+    height: 40px;
+    min-width: 40px;
+    background-color: var(--logo-color);
+    padding: 0.5rem;
+    border-radius: 7px;
+    color: #FFF;
+}
+
+.project {
+    color: var(--logo-color);
+}
+
+.app-name {
+    color: var(--label-text);
+}
+
+aside {
+    background-color: var(--secondary-color-soft);
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--secondary-color-soft);
+    padding: 2rem;
+    gap: 3rem;
+}
+
+.links {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 2rem;
+    min-width: fit-content;
+}
+
+.link {
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
+    color: var(--label-text);
+    transition: background-color 500ms;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.link:hover {
+    background-color: var(--hover-color);
+    color: var(--logo-color);
+    cursor: pointer;
+}
+
+.icon {
+    min-width: 32px;
+    margin-top: 0.1rem;
+}
