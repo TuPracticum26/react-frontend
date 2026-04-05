@@ -42,19 +42,21 @@ export default function Header() {
     }
 
     return (
-        <div className={HeaderStyles.header}>
-            <div className={HeaderStyles["left-side"]}>
-                <h2 className={HeaderStyles["company-name"]}>Document Manager</h2>
-            </div>
-            <div className={HeaderStyles["right-side"]}>
-                <div ref={searchRef} className={HeaderStyles["search-bar-container"]}>
-                    <input className={HeaderStyles["search-bar"]} type="text" onChange={(e) => {setSearchResult(e.target.value)}} onBlur={removeSearchResults} placeholder='Search documents...'/>
+        <header>
+            <div className={HeaderStyles.header}>
+                <div className={HeaderStyles["left-side"]}>
+                    <h2 className={HeaderStyles["company-name"]}>Document Manager</h2>
                 </div>
-                <button className={HeaderStyles["upload-btn"]}>Upload</button>
-                <div className={HeaderStyles["profile-pic"]}>
-                    <UserRoundPen size={32} className={HeaderStyles["profile-pic-icon"]}/>
+                <div className={HeaderStyles["right-side"]}>
+                    <div ref={searchRef} className={HeaderStyles["search-bar-container"]}>
+                        <input className={HeaderStyles["search-bar"]} type="text" onChange={(e) => {setSearchResult(e.target.value)}} onBlur={removeSearchResults} placeholder='Search documents...'/>
+                    </div>
+                    <button className={HeaderStyles["upload-btn"]}>Upload</button>
+                    <div className={HeaderStyles["profile-pic"]}>
+                        <UserRoundPen size={32} className={HeaderStyles["profile-pic-icon"]}/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </header>
     )
 }
