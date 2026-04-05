@@ -1,7 +1,7 @@
-import { useState } from "react";
-import axios from "axios";
+import {useState} from 'react';
+import axios from 'axios';
 
-export default function Register() {
+export default function Login() {
     const [form, setForm] = useState({
         username: '',
         password: ''
@@ -11,14 +11,17 @@ export default function Register() {
         e.preventDefault();
         try {
             const res = await axios.post(
-                '/api/v1/auth/register',
+                '/api/v1/auth/login',
                 form
             );
             console.log(res.data);
-            alert('Account created successfully!');
+
+            localStorage.setItem('token', res.data.token);
+            window.location.href = '/';
+
         } catch (error) {
             console.error(error.response?.data || error.message);
-            alert('Registration failed!');
+            alert('Login failed!');
         }
     };
 
@@ -45,7 +48,6 @@ export default function Register() {
     return (
         <div
             style={{
-                minHeight: "100vh",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -61,32 +63,35 @@ export default function Register() {
                     boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
                 }}
             >
-            <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-                Register
-            </h2>
+                <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+                    Welcome Back 👋
+                </h2>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder='Enter your username'
-                    style={inputStyle}
-                    onChange={(e) =>
-                        setForm({...form, username: e.target.value})
-                }
-                />
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        style={inputStyle}
+                        onChange={(e) =>
+                            setForm({ ...form, username: e.target.value })
+                        }
+                    />
 
-                <input
-                    type="password"
-                    placeholder='Enter a password'
-                    style={inputStyle}
-                    onChange={(e) =>
-                        setForm({...form, password: e.target.value})
-                }
-                />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        style={inputStyle}
+                        onChange={(e) =>
+                            setForm({ ...form, password: e.target.value })
+                        }
+                    />
 
-                <button style={buttonStyle} type="submit">Register</button>
-            </form>
+                    <button style={buttonStyle}>Login</button>
+                </form>
             </div>
         </div>
     );
+
+
+
 }

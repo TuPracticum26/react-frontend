@@ -1,8 +1,7 @@
-import {useNavigate, Link} from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 
 export default function Home() {
-    const navigate = useNavigate();
     const buttonStyle = {
         width: "100%",
         padding: "12px",
@@ -25,11 +24,12 @@ export default function Home() {
         }}>
             <h1>Welcome to the Document Manager App!</h1>
             <p>Please log in to continue</p>
-            <button
-                style={buttonStyle}
-                onClick={() => navigate("/login")}>
-                Login
-            </button>
+            <Link to="/login" className="RouterLink">
+                <button
+                    style={buttonStyle}>
+                        Login
+                </button>
+            </Link>
             <p style={{ fontStyle: "14px", color: "#555"}}>
                 You don't have an account yet?{" "}
                 <Link to="/register" style={{ color: "#4f64dc", textDecoration: "none", fontweight: "bold" }}>

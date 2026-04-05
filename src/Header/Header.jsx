@@ -2,7 +2,7 @@ import HeaderStyles from './Header.module.css';
 import { UserRoundPen } from 'lucide-react'
 import useGetDocuments from './useGetDocuments';
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "@tanstack/react-router";
 
 export default function Header() {
     const allDocument = useGetDocuments();
@@ -58,7 +58,7 @@ export default function Header() {
         <div className={HeaderStyles.header}>
             <div className={HeaderStyles["left-side"]}>
                 <h2 className={HeaderStyles["company-name"]}>
-                    <Link to="/">Document Manager</Link></h2>
+                    <Link to="/" className='RouterLink'>Document Manager</Link></h2>
             </div>
             <div className={HeaderStyles["right-side"]}>
                 <div ref={searchRef} className={HeaderStyles["search-bar-container"]}>
