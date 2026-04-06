@@ -58,9 +58,15 @@
     min-width: 200px;
 }
 
-.search-result {
+.search-result-container {
     position: absolute;
-    bottom: -3rem;
+    top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.search-result {
     width: 200px;
     padding: 0.5rem;
     background-color: #FFF;
@@ -68,6 +74,7 @@
     color: var(--logo-color);
     background-color: var(--hover-color);
     border: 1px solid var(--logo-color);
+    cursor: pointer;
 }
 .search-result > p {
     overflow: hidden;
