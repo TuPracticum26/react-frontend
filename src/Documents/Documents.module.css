@@ -1,5 +1,66 @@
 .documents {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 2rem;
+    gap: 1rem;
+}
+
+.documents > h1 {
+    color: var(--logo-color);
+}
+
+.documents-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(255px, 1fr));
+    gap: 1rem;
+}
+
+.document-card {
+    display: flex;
+    border: 1px solid black;
+    box-shadow: inset 3px 0px 0px 0px var(--logo-color);
+    padding: 1rem;
+    border-radius: 7px;
+    width: 100%;
+    transition: transform ease-in-out 250ms, 
+                background-color  ease-in-out 250ms;
+}
+
+.document-card:hover {
+    transform: translateY(-10px);
+    background-color: var(--secondary-color-soft);
+    cursor: pointer;
+}
+
+.title-author {
+    display: flex;
+    flex-direction: column;   
+    width: 100%;
+}
+
+.title-author > h4 {
+    color: var(--logo-color);
+}
+
+.title-author > p {
+    color: var(--label-text);
+}
+
+.author-date {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr, 1fr, 1fr;
+    gap: 1rem;
+}
+
+.author-date > p {
+    grid-column: 0;
+}
+
+.author-date > p + p {
+    grid-column: 3;
+    justify-self: end;
 }
