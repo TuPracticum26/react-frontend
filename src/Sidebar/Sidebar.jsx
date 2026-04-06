@@ -12,7 +12,7 @@ export default function Sidebar() {
     return (
         <aside>
             <div className={SidebarStyles["sidebar"]}>
-                <Link to="/" className="RouterLink">
+                <Link to="/dashboard" className="RouterLink">
                     <div className={SidebarStyles["title"]}>
                         <Landmark className={SidebarStyles["title-icon"]} />
                         <div>
