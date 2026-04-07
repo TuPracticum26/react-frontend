@@ -11,7 +11,7 @@
 
 .left-side {
     align-items: center;
-    grid-column: 0;
+    grid-column: 1;
     justify-self: start;
 }
 

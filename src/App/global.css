@@ -72,7 +72,8 @@ main > * {
   height: 100%;
 }
 
-.RouterLink {
+a {
   text-decoration: none;
   color: inherit;
+  cursor: pointer;
 }
