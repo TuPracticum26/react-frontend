@@ -1,27 +1,27 @@
-import {useState} from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function Login() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
-        username: '',
-        password: ''
+        username: "",
+        password: "",
     });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(
-                '/api/v1/auth/login',
-                form
-            );
-            console.log(res.data);
-
-            localStorage.setItem('token', res.data.token);
-            window.location.href = '/dashboard';
-
+            const res = await axios.post("/api/v1/auth/login", form);
+            const username = res.config.data
+                .match(/[^({"username":")].+","password"./)[0]
+                .slice(0, -13);
+            localStorage.setItem("username", username);
+            localStorage.setItem("token", res.data.token);
+            navigate({ to: "/dashboard" });
         } catch (error) {
             console.error(error.response?.data || error.message);
-            alert('Login failed!');
+            alert("Login failed!");
         }
     };
 
@@ -91,7 +91,4 @@ export default function Login() {
             </div>
         </div>
     );
-
-
-
 }
