@@ -102,7 +102,7 @@ export default function Header() {
                             <UserRoundPen size={32} />
                         </div>
 
-                        <button onClick={handleLogout}>Logout</button>
+                        <button onClick={handleLogout} className={HeaderStyles["upload-btn"]}>Logout</button>
                     </div>
                 )}
                 <div
@@ -119,7 +119,7 @@ export default function Header() {
                     <div
                         style={{
                             position: "absolute",
-                            top: "50px",
+                            top: "4rem",
                             right: "0",
                             background: "white",
                             boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
