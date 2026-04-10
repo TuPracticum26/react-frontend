@@ -57,11 +57,12 @@ h1, h2, h3, h4, h5, h6 {
   isolation: isolate;
 }
 
-/*  */
-
 html, body {
   font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   height: 100vh;
+  background-color: rgb(249, 249, 254);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 #root {
