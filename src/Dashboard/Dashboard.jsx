@@ -13,8 +13,8 @@ import {
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
+    const token = JSON.parse(localStorage.getItem("token"));
     const documents = useGetDocuments();
-    const [username] = useState(localStorage.getItem("username"));
     const [userDocumentsVersions, setUserDocumentsVersions] = useState([]);
     const [allDocumentsVersions, setAllDocumentsVersions] = useState([]);
     const [pendingDocument, setPendingDocuments] = useState(0);
@@ -58,8 +58,6 @@ export default function Dashboard() {
         setAllDocumentsVersions(setAllVersions);
     }
 
-    const token = localStorage.getItem("token");
-
     async function getUserVersions(docId, whichDocuments) {
         const userVersionArray = [];
         const allVersionArray = [];
@@ -74,7 +72,7 @@ export default function Dashboard() {
         }
 
         versions.map((version) => {
-            if (version.createdByUsername == username) {
+            if (version.createdByUsername == token.username) {
                 userVersionArray.push(version);
             }
         });

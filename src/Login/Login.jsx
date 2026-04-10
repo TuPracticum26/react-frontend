@@ -13,11 +13,7 @@ export default function Login() {
         e.preventDefault();
         try {
             const res = await axios.post("/api/v1/auth/login", form);
-            const username = res.config.data
-                .match(/[^({"username":")].+","password"./)[0]
-                .slice(0, -13);
-            localStorage.setItem("username", username);
-            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("token", JSON.stringify(res.data));
             navigate({ to: "/dashboard" });
         } catch (error) {
             console.error(error.response?.data || error.message);
