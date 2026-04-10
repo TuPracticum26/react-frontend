@@ -25,8 +25,9 @@ h3 {
     color: var(--label-text);
 }
 
-aside {
+.sidebar, aside {
     background-color: var(--secondary-color-soft);
+    min-width: 30vw;
 }
 
 .sidebar {
