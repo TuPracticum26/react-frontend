@@ -48,6 +48,8 @@ export default function Register() {
                 justifyContent: "center",
                 alignItems: "center",
                 background: "linear-gradient(135deg, #667eea, #764ba3)",
+                width: "100%",
+                height: "100%"
             }}
         >
             <div
