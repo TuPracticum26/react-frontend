@@ -10,9 +10,37 @@
 }
 
 .left-side {
+    display: flex;
     align-items: center;
     grid-column: 1;
-    justify-self: start;
+    gap: 2rem;
+}
+
+.header-link {
+    color: var(--label-text);
+    position: relative;
+    transition: all 250ms;
+}
+
+.header-link:hover {
+    color: var(--logo-color);
+}
+
+.header-link::after {
+    position: absolute;
+    content: "";
+    bottom: 0;
+    width: 0;
+    border-radius: 100vw;
+    left: 50%;
+    height: 0.25rem;
+    background-color: var(--logo-color);
+    transition: all 250ms;
+}
+
+.header-link:hover::after {
+    left: 0;
+    width: 100%;
 }
 
 .right-side {
@@ -38,6 +66,8 @@
     padding-right: 0.3rem;
     background-color: rgb(241, 243, 254);
     border: 1px solid var(--default-button);
+    position: relative;
+    cursor: pointer;
 }
 
 .profile-pic-icon {
@@ -86,6 +116,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 .upload-btn {
     border: none;
     text-align: center;
@@ -100,25 +131,25 @@
 }
 
 .logout-menu {
-    position: "absolute";
-    top: "4rem";
-    right: "0";
-    background: "white";
-    box-shadow: "0 4px 12px rgba(0,0,0,0.15)";
-    border-radius: "8px";
-    display: "flex";
-    flex-direction: "column";
-    min-width: "150px";
-    overflow: "hidden";
+    position: absolute;
+    top: 3rem;
+    right: 0;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    overflow: hidden;
     z-index: 1000;
 }
 
 .logout-btn {
     padding: 0.75rem 1rem;
-    text-decoration: "none";
+    text-decoration: none;
     color: var(--label-text);
     border: none;
-    border-bottom: "1px solid #eee";
+    border-bottom: 1px solid #eee;
     background-color: #fff;
     display: flex;
     justify-content: start;

@@ -5,6 +5,7 @@ import { useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 
 export default function Header() {
+    const token = JSON.parse(localStorage.getItem("token"));
     const allDocuments = useGetDocuments();
     const [searchResult, setSearchResult] = useState("");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,6 +40,21 @@ export default function Header() {
                         Document Manager
                     </Link>
                 </h2>
+                {!token?.roles?.includes("READER") ? (
+                    <h3 className={HeaderStyles["header-link"]}>
+                        <Link to="/dashboard" className="RouterLink">
+                            Dashboard
+                        </Link>
+                    </h3>
+                ) : null}
+                {console.log(token.roles)}
+                {token?.roles?.includes("ADMIN") ? (
+                    <h3 className={HeaderStyles["header-link"]}>
+                        <Link to="/setrole" className="RouterLink">
+                            Set Role
+                        </Link>
+                    </h3>
+                ) : null}
             </div>
             <div className={HeaderStyles["right-side"]}>
                 <div
@@ -83,27 +99,26 @@ export default function Header() {
                 <div
                     className={HeaderStyles["profile-pic"]}
                     onClick={toggleMenu}
-                    style={{ cursor: "pointer", userSelect: "none" }}
+                    tabIndex="0"
                 >
                     <UserRoundPen
                         size={32}
                         className={HeaderStyles["profile-pic-icon"]}
                     />
+                    {isMenuOpen && (
+                        <div className={HeaderStyles["logout-menu"]}>
+                            <button
+                                onClick={() => {
+                                    setIsMenuOpen(false);
+                                    handleLogout();
+                                }}
+                                className={HeaderStyles["logout-btn"]}
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
                 </div>
-                {isMenuOpen && (
-                    <div className={HeaderStyles["logout-menu"]}
-                    >
-                        <button
-                            onClick={() => {
-                                setIsMenuOpen(false);
-                                handleLogout();
-                            }}
-                            className={HeaderStyles["logout-btn"]}
-                        >
-                            Logout
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );
