@@ -24,6 +24,8 @@ export default function Home({ children }) {
                 justifyContent: "center",
                 alignItems: "center",
                 textAlign: "center",
+                width: "100%",
+                height: "100%",
             }}
         >
             {pathname == "/login" || pathname == "/register" ? (
