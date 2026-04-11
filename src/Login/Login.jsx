@@ -1,9 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "@tanstack/react-router";
 
 export default function Login() {
-    const navigate = useNavigate();
     const [form, setForm] = useState({
         username: "",
         password: "",
@@ -14,7 +12,7 @@ export default function Login() {
         try {
             const res = await axios.post("/api/v1/auth/login", form);
             localStorage.setItem("token", JSON.stringify(res.data));
-            navigate({ to: "/dashboard" });
+            window.location.replace("/dashboard");
         } catch (error) {
             console.error(error.response?.data || error.message);
             alert("Login failed!");
