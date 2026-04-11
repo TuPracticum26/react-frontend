@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import axios from "axios";
 
 export default function Login() {
@@ -46,6 +47,8 @@ export default function Login() {
                 justifyContent: "center",
                 alignItems: "center",
                 background: "linear-gradient(135deg, #667eea, #764ba3)",
+                width: "100%",
+                height: "100%",
             }}
         >
             <div
@@ -81,6 +84,20 @@ export default function Login() {
                     />
 
                     <button style={buttonStyle}>Login</button>
+
+                    <p style={{ fontStyle: "14px", color: "#555", marginTop: "1rem"}}>
+                        You don't have an account yet?{" "}
+                        <Link
+                            to="/register"
+                            style={{
+                                color: "#4f64dc",
+                                textDecoration: "none",
+                                fontweight: "bold",
+                            }}
+                        >
+                            Register here.
+                        </Link>
+                    </p>
                 </form>
             </div>
         </div>
