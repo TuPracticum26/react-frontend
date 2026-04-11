@@ -1,8 +1,8 @@
 import HeaderStyles from "./Header.module.css";
 import { UserRoundPen } from "lucide-react";
 import useGetDocuments from "../hooks/useGetDocuments";
-import { useState, useRef, useEffect } from "react";
-import { useNavigate, Link } from "@tanstack/react-router";
+import { useState, useRef } from "react";
+import { Link } from "@tanstack/react-router";
 
 export default function Header() {
     const allDocuments = useGetDocuments();
@@ -12,8 +12,6 @@ export default function Header() {
         setIsMenuOpen(!isMenuOpen);
     };
     const searchRef = useRef();
-    const navigate = useNavigate();
-    const token = localStorage.getItem("token");
 
     function SearchResult({ id, title }) {
         return (
@@ -30,7 +28,7 @@ export default function Header() {
 
     function handleLogout() {
         localStorage.removeItem("token");
-        navigate({ to: "/login" });
+        window.location.reload();
     }
 
     return (
@@ -82,29 +80,6 @@ export default function Header() {
                     ) : null}
                 </div>
                 <button className={HeaderStyles["upload-btn"]}>Upload</button>
-                {!token ? (
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                        {/*<button className={HeaderStyles["upload-btn"]} onClick={() => navigate("/login")}>Login</button>*/}
-                        {/*<button className={HeaderStyles["upload-btn"]} onClick={() => navigate("/register")}>Register</button>*/}
-                    </div>
-                ) : (
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "1rem",
-                        }}
-                    >
-                        <div
-                            className={HeaderStyles["profile-pic"]}
-                            onClick={() => navigate("/profile")}
-                        >
-                            <UserRoundPen size={32} />
-                        </div>
-
-                        <button onClick={handleLogout} className={HeaderStyles["upload-btn"]}>Logout</button>
-                    </div>
-                )}
                 <div
                     className={HeaderStyles["profile-pic"]}
                     onClick={toggleMenu}
@@ -116,44 +91,17 @@ export default function Header() {
                     />
                 </div>
                 {isMenuOpen && (
-                    <div
-                        style={{
-                            position: "absolute",
-                            top: "4rem",
-                            right: "0",
-                            background: "white",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                            borderRadius: "8px",
-                            display: "flex",
-                            flexDirection: "column",
-                            minWidth: "150px",
-                            overflow: "hidden",
-                            zIndex: 1000,
-                        }}
+                    <div className={HeaderStyles["logout-menu"]}
                     >
-                        <Link
-                            to="/login"
-                            onClick={() => setIsMenuOpen(false)}
-                            style={{
-                                padding: "12px 16px",
-                                textDecoration: "none",
-                                color: "inherit",
-                                borderBottom: "1px solid #eee",
+                        <button
+                            onClick={() => {
+                                setIsMenuOpen(false);
+                                handleLogout();
                             }}
+                            className={HeaderStyles["logout-btn"]}
                         >
-                            Login
-                        </Link>
-                        <Link
-                            to="/register"
-                            onClick={() => setIsMenuOpen(false)}
-                            style={{
-                                padding: "12px 16px",
-                                textDecoration: "none",
-                                color: "inherit",
-                            }}
-                        >
-                            Register
-                        </Link>
+                            Logout
+                        </button>
                     </div>
                 )}
             </div>
