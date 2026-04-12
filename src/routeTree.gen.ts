@@ -12,12 +12,18 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 
+const SetRoleLazyRouteImport = createFileRoute('/setRole')()
 const RegisterLazyRouteImport = createFileRoute('/register')()
 const LoginLazyRouteImport = createFileRoute('/login')()
 const DocumentsLazyRouteImport = createFileRoute('/documents')()
 const DashboardLazyRouteImport = createFileRoute('/dashboard')()
 const IndexLazyRouteImport = createFileRoute('/')()
 
+const SetRoleLazyRoute = SetRoleLazyRouteImport.update({
+  id: '/setRole',
+  path: '/setRole',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/setRole.lazy').then((d) => d.Route))
 const RegisterLazyRoute = RegisterLazyRouteImport.update({
   id: '/register',
   path: '/register',
@@ -50,6 +56,7 @@ export interface FileRoutesByFullPath {
   '/documents': typeof DocumentsLazyRoute
   '/login': typeof LoginLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/setRole': typeof SetRoleLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByTo {
   '/documents': typeof DocumentsLazyRoute
   '/login': typeof LoginLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/setRole': typeof SetRoleLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -65,13 +73,27 @@ export interface FileRoutesById {
   '/documents': typeof DocumentsLazyRoute
   '/login': typeof LoginLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/setRole': typeof SetRoleLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/documents' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/documents'
+    | '/login'
+    | '/register'
+    | '/setRole'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/documents' | '/login' | '/register'
-  id: '__root__' | '/' | '/dashboard' | '/documents' | '/login' | '/register'
+  to: '/' | '/dashboard' | '/documents' | '/login' | '/register' | '/setRole'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/documents'
+    | '/login'
+    | '/register'
+    | '/setRole'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,10 +102,18 @@ export interface RootRouteChildren {
   DocumentsLazyRoute: typeof DocumentsLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
+  SetRoleLazyRoute: typeof SetRoleLazyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/setRole': {
+      id: '/setRole'
+      path: '/setRole'
+      fullPath: '/setRole'
+      preLoaderRoute: typeof SetRoleLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -128,6 +158,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocumentsLazyRoute: DocumentsLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,
+  SetRoleLazyRoute: SetRoleLazyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
