@@ -1,0 +1,79 @@
+.set-role-container {
+    padding-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.roles-container {
+    display: flex;
+    gap: 1rem;
+    width: fit-content;
+    align-items: center;
+    padding: 1rem 0.5rem;
+    border-radius: 10px;
+    background-color: var(--secondary-color-soft);
+    box-shadow: 0px 0px 10px 2px gainsboro;
+}
+
+.id-name {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 50ch;
+    color: var(--logo-color);
+}
+
+.roles {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--label-text);
+}
+
+.roles-container > button {
+    padding: 0.25rem 1rem;
+    width: fit-content;
+    height: fit-content;
+}
+
+.search-bar {
+    border-radius: 10px;
+    border: none;
+    background-color: var(--secondary-color-soft);
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    min-width: 300px;
+    box-shadow: 0px 0px 5px 5px var(--logo-color);
+    transition: box-shadow 250ms;
+}
+
+.search-bar:focus {
+    box-shadow: 0px 0px 8px 8px var(--logo-color);
+}
+
+.save-btn {
+    border: none;
+    text-align: center;
+    padding-inline: 1rem;
+    padding-block: 0.25rem;
+    font-weight: 475;
+    border-radius: 7px;
+    font-size: 0.9rem;
+    color: #fff;
+    background-color: var(--default-button);
+    cursor: pointer;
+    transition: box-shadow 250ms;
+}
+
+.save-btn:hover {
+    box-shadow: 0px 0px 3px 3px var(--logo-color);
+}
