@@ -10,7 +10,8 @@ import {
     ClipboardList,
     Activity,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { Spinner } from "@radix-ui/themes";
 
 export default function Dashboard() {
     const token = JSON.parse(localStorage.getItem("token"));
@@ -205,21 +206,32 @@ export default function Dashboard() {
                     <ClipboardList size={"28px"} />
                     Recent Personal Tasks
                 </h2>
+
+                {recentUserVersions.length != 0 ?
                 <div className={DashboardStyles["tasks-container"]}>
                     {recentUserVersions.map((version) => (
                         <Task key={version.id} version={version} />
                     ))}
-                </div>
+                    </div>
+                    : <div className={DashboardStyles["no-personal-activity"]}>
+                        <h2>No recent changes</h2>
+                    </div>
+                }
             </div>
             <div className={DashboardStyles["team-activity"]}>
                 <h2>
                     <Activity size={"28px"} /> Recent Team Activity
                 </h2>
-                <div className={DashboardStyles["tasks-container"]}>
-                    {recentAllVersions.map((version) => (
-                        <Task key={version.id} version={version} />
-                    ))}
-                </div>
+                {recentAllVersions.length != 0 ?
+                    <div className={DashboardStyles["tasks-container"]}>
+                            {recentAllVersions.map((version) => (
+                                <Task key={version.id} version={version} />
+                            ))}
+                    </div>
+                    : <div className={DashboardStyles["spinner-container"]}>
+                        <Spinner size={3} className={DashboardStyles["spinner"]} />
+                    </div>
+                }
             </div>
         </div>
     );
