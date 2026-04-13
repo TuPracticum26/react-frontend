@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useGetUsers from "../hooks/useGetUsers";
-import SetRoleStyles from "./SetRole.module.css";
+import ManageUsers from "./ManageUsers.module.css";
 
 function UserCard({ id, username, roles }) {
     const adminOption = useRef();
@@ -50,13 +50,33 @@ function UserCard({ id, username, roles }) {
             .catch((error) => console.error("Error: ", error));
     }
 
+    async function deleteUser() {
+        await fetch(`/api/v1/admin/deleteUser/${id}`, {
+            method: "DELETE",
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+                return response;
+            })
+            .then(() => {
+                alert("User deleted successfully!"); 
+                window.location.reload();
+            })
+            .catch((error) => console.error("Error: ", error));
+    }
+
     return (
-        <div className={SetRoleStyles["roles-container"]}>
-            <div className={SetRoleStyles["id-name"]}>
+        <div className={ManageUsers["roles-container"]}>
+            <div className={ManageUsers["id-name"]}>
                 <h2>{id}</h2>
                 <h2>{username}</h2>
             </div>
-            <div className={SetRoleStyles["roles"]}>
+
+            <button className={ManageUsers["delete-btn"]} onClick={deleteUser}>Delete User</button>
+
+            <div className={ManageUsers["roles"]}>
                 <input
                     type="checkbox"
                     name="ADMIN"
@@ -104,7 +124,7 @@ function UserCard({ id, username, roles }) {
 
             <button
                 onClick={changeUserRoles}
-                className={SetRoleStyles["save-btn"]}
+                className={ManageUsers["save-btn"]}
             >
                 Save
             </button>
@@ -117,12 +137,12 @@ export default function SetRole() {
     const [searchResult, setSearchResult] = useState("");
 
     return (
-        <div className={SetRoleStyles["set-role-container"]}>
+        <div className={ManageUsers["manage-users-container"]}>
             <h1>Select to which user you want to add/remove a role</h1>
 
             <input
                 autoFocus={true}
-                className={SetRoleStyles["search-bar"]}
+                className={ManageUsers["search-bar"]}
                 type="text"
                 onChange={(e) => {
                     setSearchResult(e.target.value);
@@ -133,7 +153,7 @@ export default function SetRole() {
                 placeholder="Search user..."
             />
 
-            <div className={SetRoleStyles["user-card-container"]}>
+            <div className={ManageUsers["user-card-container"]}>
                 {searchResult != "" ? (
                     <>
                         {allUsers.map((user) => {

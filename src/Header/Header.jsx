@@ -49,8 +49,8 @@ export default function Header() {
                 ) : null}
                 {token?.roles?.includes("ADMIN") ? (
                     <h3 className={HeaderStyles["header-link"]}>
-                        <Link to="/setrole" className="RouterLink">
-                            Set Role
+                        <Link to="/manageUsers" className="RouterLink">
+                            Manage Users
                         </Link>
                     </h3>
                 ) : null}
