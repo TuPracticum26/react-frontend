@@ -5,6 +5,7 @@ import Header from "../Header/Header";
 import Sidebar from "../Sidebar/Sidebar";
 import rootStyles from "./root.module.css";
 import Home from "../Home/Home";
+import { Theme } from "@radix-ui/themes";
 
 const token = localStorage.getItem("token");
 
@@ -18,7 +19,9 @@ export const Route = createRootRoute({
                         <div className={rootStyles.body}>
                             <Sidebar />
                             <main>
-                                <Outlet />
+                                <Theme>
+                                    <Outlet />
+                                </Theme>
                             </main>
                         </div>
                     </>

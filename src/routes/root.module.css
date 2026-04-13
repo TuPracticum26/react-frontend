@@ -3,3 +3,14 @@
     display: grid;
     grid-template-columns: 1fr 3fr;
 }
+
+.loading-skeleton-container {
+    position: relative;
+    top: 18rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    transform: scale(2.2);
+}

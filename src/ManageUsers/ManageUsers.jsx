@@ -61,7 +61,7 @@ function UserCard({ id, username, roles }) {
                 return response;
             })
             .then(() => {
-                alert("User deleted successfully!"); 
+                alert("User deleted successfully!");
                 window.location.reload();
             })
             .catch((error) => console.error("Error: ", error));
@@ -74,7 +74,12 @@ function UserCard({ id, username, roles }) {
                 <h2>{username}</h2>
             </div>
 
-            <button className={ManageUsersStyles["delete-btn"]} onClick={deleteUser}>Delete User</button>
+            <button
+                className={ManageUsersStyles["delete-btn"]}
+                onClick={deleteUser}
+            >
+                Delete User
+            </button>
 
             <div className={ManageUsersStyles["roles"]}>
                 <input
@@ -133,13 +138,12 @@ function UserCard({ id, username, roles }) {
 }
 
 export default function ManageUsers({ allUsers = [], page, setPage }) {
-    // const allUsers = useGetUsers();
-    console.log(allUsers)
+    console.log(allUsers);
     const [searchResult, setSearchResult] = useState("");
 
     return (
         <div className={ManageUsersStyles["manage-users-container"]}>
-            <h1>Select to which user you want to add/remove a role</h1>
+            <h1>Select to which user manage</h1>
 
             <input
                 autoFocus={true}
@@ -189,10 +193,22 @@ export default function ManageUsers({ allUsers = [], page, setPage }) {
                 )}
             </div>
             {searchResult == "" ? (
-            <div className={ManageUsersStyles["page-buttons-container"]}>
-                <button disabled={page <= 0} onClick={() => setPage(page - 1)} className={ManageUsersStyles["page-button"]}>Prev</button>
-                <button disabled={allUsers.length < 2} onClick={() => setPage(page + 1)} className={ManageUsersStyles["page-button"]}>Next</button>
-            </div>
+                <div className={ManageUsersStyles["page-buttons-container"]}>
+                    <button
+                        disabled={page <= 0}
+                        onClick={() => setPage(page - 1)}
+                        className={ManageUsersStyles["page-button"]}
+                    >
+                        Prev
+                    </button>
+                    <button
+                        disabled={allUsers.length < 2}
+                        onClick={() => setPage(page + 1)}
+                        className={ManageUsersStyles["page-button"]}
+                    >
+                        Next
+                    </button>
+                </div>
             ) : null}
         </div>
     );
