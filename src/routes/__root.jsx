@@ -1,5 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import Header from "../Header/Header";
 import Sidebar from "../Sidebar/Sidebar";
 import rootStyles from "./root.module.css";
@@ -20,13 +21,14 @@ export const Route = createRootRoute({
                                 <Outlet />
                             </main>
                         </div>
-                        <TanStackRouterDevtools />
                     </>
                 ) : (
                     <Home>
                         <Outlet />
                     </Home>
                 )}
+                <TanStackRouterDevtools />
+                <ReactQueryDevtools />
             </>
         );
     },
