@@ -96,3 +96,31 @@
 .delete-btn:hover {
     box-shadow: 0px 0px 3px 3px rgb(134, 25, 21);
 }
+
+.page-buttons-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.page-button {
+    background-color: var(--logo-color);
+    color: #FFF;
+    border-radius: 7px;
+    border: none;
+    padding: 0.5rem 1rem;
+    transition: box-shadow 250ms;
+    cursor: pointer;
+}
+
+.page-button:hover {
+    box-shadow: 0px 0px 7px 7px var(--logo-color);
+}
+
+.page-button:disabled {
+    background-color: rgb(207, 210, 216);
+    cursor: default;
+}
+
+.page-button:disabled:hover {
+    box-shadow: none;
+}

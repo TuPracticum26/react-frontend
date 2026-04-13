@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useGetUsers from "../hooks/useGetUsers";
-import ManageUsers from "./ManageUsers.module.css";
+import ManageUsersStyles from "./ManageUsers.module.css";
 
 function UserCard({ id, username, roles }) {
     const adminOption = useRef();
@@ -68,15 +68,15 @@ function UserCard({ id, username, roles }) {
     }
 
     return (
-        <div className={ManageUsers["roles-container"]}>
-            <div className={ManageUsers["id-name"]}>
+        <div className={ManageUsersStyles["roles-container"]}>
+            <div className={ManageUsersStyles["id-name"]}>
                 <h2>{id}</h2>
                 <h2>{username}</h2>
             </div>
 
-            <button className={ManageUsers["delete-btn"]} onClick={deleteUser}>Delete User</button>
+            <button className={ManageUsersStyles["delete-btn"]} onClick={deleteUser}>Delete User</button>
 
-            <div className={ManageUsers["roles"]}>
+            <div className={ManageUsersStyles["roles"]}>
                 <input
                     type="checkbox"
                     name="ADMIN"
@@ -124,7 +124,7 @@ function UserCard({ id, username, roles }) {
 
             <button
                 onClick={changeUserRoles}
-                className={ManageUsers["save-btn"]}
+                className={ManageUsersStyles["save-btn"]}
             >
                 Save
             </button>
@@ -132,17 +132,18 @@ function UserCard({ id, username, roles }) {
     );
 }
 
-export default function SetRole() {
-    const allUsers = useGetUsers();
+export default function ManageUsers({ allUsers = [], page, setPage }) {
+    // const allUsers = useGetUsers();
+    console.log(allUsers)
     const [searchResult, setSearchResult] = useState("");
 
     return (
-        <div className={ManageUsers["manage-users-container"]}>
+        <div className={ManageUsersStyles["manage-users-container"]}>
             <h1>Select to which user you want to add/remove a role</h1>
 
             <input
                 autoFocus={true}
-                className={ManageUsers["search-bar"]}
+                className={ManageUsersStyles["search-bar"]}
                 type="text"
                 onChange={(e) => {
                     setSearchResult(e.target.value);
@@ -153,7 +154,7 @@ export default function SetRole() {
                 placeholder="Search user..."
             />
 
-            <div className={ManageUsers["user-card-container"]}>
+            <div className={ManageUsersStyles["user-card-container"]}>
                 {searchResult != "" ? (
                     <>
                         {allUsers.map((user) => {
@@ -187,6 +188,12 @@ export default function SetRole() {
                     </>
                 )}
             </div>
+            {searchResult == "" ? (
+            <div className={ManageUsersStyles["page-buttons-container"]}>
+                <button disabled={page <= 0} onClick={() => setPage(page - 1)} className={ManageUsersStyles["page-button"]}>Prev</button>
+                <button disabled={allUsers.length < 2} onClick={() => setPage(page + 1)} className={ManageUsersStyles["page-button"]}>Next</button>
+            </div>
+            ) : null}
         </div>
     );
 }
