@@ -62,7 +62,6 @@ html, body {
   height: 100vh;
   background-color: rgb(249, 249, 254);
   max-width: 100%;
-  overflow-x: hidden;
 }
 
 #root {
