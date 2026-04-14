@@ -2,10 +2,11 @@ import HeaderStyles from "./Header.module.css";
 import { UserRoundPen } from "lucide-react";
 import useGetDocuments from "../hooks/useGetDocuments";
 import { useState, useRef } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 export default function Header() {
     const token = JSON.parse(localStorage.getItem("token"));
+    const navigate = useNavigate();
     const allDocuments = useGetDocuments();
     const [searchResult, setSearchResult] = useState("");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
