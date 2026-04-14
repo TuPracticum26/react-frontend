@@ -56,7 +56,14 @@
     gap: 1rem;
 }
 
+.author-date > p:first-child {
+    width: 12ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .author-date > p {
+    white-space: nowrap;
     grid-column: 0;
 }
 
