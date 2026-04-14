@@ -9,6 +9,7 @@ import {
 import { Link } from "@tanstack/react-router";
 
 export default function Sidebar() {
+    const token = JSON.parse(localStorage.getItem("token"));
     return (
         <aside>
             <div className={SidebarStyles["sidebar"]}>
@@ -28,30 +29,34 @@ export default function Sidebar() {
                 <div className={SidebarStyles["links"]}>
                     <div className={SidebarStyles["link"]}>
                         <Link to="/documents" className="RouterLink">
-                            <h3>
+                            <h2>
                                 <BookOpenText className={SidebarStyles.icon} />{" "}
                                 &nbsp; All Documents
-                            </h3>
+                            </h2>
                         </Link>
                     </div>
+                    {token.roles.includes("AUTHOR") ? 
+                    <>
                     <div className={SidebarStyles["link"]}>
-                        <h3>
+                        <h2>
                             <SquarePen className={SidebarStyles.icon} /> &nbsp;
                             Drafts
-                        </h3>
+                        </h2>
                     </div>
                     <div className={SidebarStyles["link"]}>
-                        <h3>
+                        <h2>
                             <ClipboardClock className={SidebarStyles.icon} />{" "}
                             &nbsp; Pending Review
-                        </h3>
+                        </h2>
                     </div>
                     <div className={SidebarStyles["link"]}>
-                        <h3>
+                        <h2>
                             <BadgeCheck className={SidebarStyles.icon} />{" "}
                             &nbsp;Approved
-                        </h3>
+                        </h2>
                     </div>
+                    </>
+                    : null}
                 </div>
             </div>
         </aside>
