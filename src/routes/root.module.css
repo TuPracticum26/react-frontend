@@ -14,3 +14,28 @@
     gap: 0;
     transform: scale(2.2);
 }
+
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: var(--hover-color);
+    width: 80%;
+    margin-left: 10%;
+    color: var(--logo-color);
+}
+
+.not-found-container > p {
+    color: var(--label-text);
+}
+
+.not-found-container > h4 {
+    color: var(--body-text);
+}
+
+.not-found-container > h4 > span {
+    color: blue;
+    text-decoration: underline;
+}
