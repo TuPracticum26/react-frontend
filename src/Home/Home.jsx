@@ -25,12 +25,10 @@ export default function Home({ children }) {
                 justifyContent: "center",
                 alignItems: "center",
                 textAlign: "center",
-                width: "80%",
+                width: "100%",
                 height: "100%",
-                paddingLeft: "20%",
             }}
         >
-            <div style={{backgroundColor: "var(--hover-color)", padding: "2rem", height: "100%", width: "100%"}}>
 
             
             {!token ? 
@@ -59,6 +57,7 @@ export default function Home({ children }) {
                 </>
             )
             :
+                <div style={{backgroundColor: "var(--hover-color)", padding: "2rem", height: "100%", width: "80%"}}>
             <div style={{display: "flex", flexDirection: "column", gap:"2rem", justifyContent: "center", alignItems: "center"}}>
             <h1 style={{color:"var(--logo-color)"}}>Welcome to the Document Manager App</h1>
             <h2>Navigate through the menus to read/write/alter Documents!</h2>
@@ -66,8 +65,8 @@ export default function Home({ children }) {
                 <img src={DocumentImage} alt="" style={{maxWidth: "400px"}}/>
             </div>
             </div> 
-            }
             </div>
+            }
             </div>
         );
 }
