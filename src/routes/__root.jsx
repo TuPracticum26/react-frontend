@@ -8,13 +8,18 @@ import Home from "../Home/Home";
 import { Theme } from "@radix-ui/themes";
 import NotFoundImage from "../../public/Not_Found.png";
 
-const token = localStorage.getItem("token");
+// Функция за проверка на токен - ще се изпълнява при всяко рендериране
+const isAuthenticated = () => {
+    return !!localStorage.getItem("token");
+};
 
 export const Route = createRootRoute({
     component: () => {
+        const tokenExists = isAuthenticated(); // Проверяваме при всяко рендериране
+
         return (
             <>
-                {token ? (
+                {tokenExists ? (
                     <>
                         <Header />
                         <div className={rootStyles.body}>
