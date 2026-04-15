@@ -15,7 +15,7 @@ h2 {
     background-color: var(--logo-color);
     padding: 0.5rem;
     border-radius: 7px;
-    color: #FFF;
+    color: #fff;
 }
 
 .project {
@@ -26,7 +26,8 @@ h2 {
     color: var(--label-text);
 }
 
-.sidebar, aside {
+.sidebar,
+aside {
     background-color: var(--secondary-color-soft);
     min-width: 30vw;
 }
@@ -65,4 +66,8 @@ h2 {
 .icon {
     min-width: 32px;
     margin-top: 0.1rem;
+}
+
+.document-links {
+    width: 100%;
 }

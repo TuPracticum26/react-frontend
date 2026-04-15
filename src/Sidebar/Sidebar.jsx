@@ -5,6 +5,7 @@ import {
     SquarePen,
     ClipboardClock,
     BadgeCheck,
+    FileStack,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -27,36 +28,73 @@ export default function Sidebar() {
                     </div>
                 </Link>
                 <div className={SidebarStyles["links"]}>
-                    <div className={SidebarStyles["link"]}>
-                        <Link to="/documents" className="RouterLink">
+                    <Link
+                        to="/documents"
+                        className={SidebarStyles["document-links"]}
+                    >
+                        <div className={SidebarStyles["link"]}>
                             <h2>
                                 <BookOpenText className={SidebarStyles.icon} />{" "}
                                 &nbsp; All Documents
                             </h2>
-                        </Link>
-                    </div>
-                    {token.roles.includes("AUTHOR") ? 
-                    <>
-                    <div className={SidebarStyles["link"]}>
-                        <h2>
-                            <SquarePen className={SidebarStyles.icon} /> &nbsp;
-                            Drafts
-                        </h2>
-                    </div>
-                    <div className={SidebarStyles["link"]}>
-                        <h2>
-                            <ClipboardClock className={SidebarStyles.icon} />{" "}
-                            &nbsp; Pending Review
-                        </h2>
-                    </div>
-                    <div className={SidebarStyles["link"]}>
-                        <h2>
-                            <BadgeCheck className={SidebarStyles.icon} />{" "}
-                            &nbsp;Approved
-                        </h2>
-                    </div>
-                    </>
-                    : null}
+                        </div>
+                    </Link>
+                    {!token.roles.includes("READER") ? (
+                        <>
+                            <Link
+                                to="/versions"
+                                className={SidebarStyles["document-links"]}
+                            >
+                                <div className={SidebarStyles["link"]}>
+                                    <h2>
+                                        <FileStack
+                                            className={SidebarStyles.icon}
+                                        />{" "}
+                                        &nbsp; Your versions
+                                    </h2>
+                                </div>
+                            </Link>
+                            <Link
+                                to="/versions/drafts"
+                                className={SidebarStyles["document-links"]}
+                            >
+                                <div className={SidebarStyles["link"]}>
+                                    <h2>
+                                        <SquarePen
+                                            className={SidebarStyles.icon}
+                                        />{" "}
+                                        &nbsp; Drafts
+                                    </h2>
+                                </div>
+                            </Link>
+                            <Link
+                                to="/versions/pending"
+                                className={SidebarStyles["document-links"]}
+                            >
+                                <div className={SidebarStyles["link"]}>
+                                    <h2>
+                                        <ClipboardClock
+                                            className={SidebarStyles.icon}
+                                        />{" "}
+                                        &nbsp; Pending Review
+                                    </h2>
+                                </div>
+                            </Link>
+                            <Link
+                                to="/versions/approved"
+                                className={SidebarStyles["document-links"]}
+                            >
+                                <div className={SidebarStyles["link"]}>
+                                    <h2>
+                                        <BadgeCheck
+                                            className={SidebarStyles.icon}
+                                        />{" "}
+                                        &nbsp;Approved
+                                    </h2>
+                                </div>
+                            </Link>
+                        </>
+                    ) : null}
                 </div>
             </div>
         </aside>
