@@ -17,7 +17,8 @@
     text-overflow: clip !important;
 }
 
-.legend > h1, .legend > p {
+.legend > h1,
+.legend > p {
     white-space: normal !important;
 }
 
@@ -31,7 +32,8 @@
     padding: 3rem;
 }
 
-.hero-card, .hero-card-latest-change {
+.hero-card,
+.hero-card-latest-change {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -51,8 +53,9 @@
     bottom: 1.4rem;
 }
 
+.hero-card:hover,
 .hero-card-latest-change:hover {
-    color: var(--logo-color);
+    color: blue;
 }
 
 .latest-change-content {
@@ -74,7 +77,8 @@
     align-items: center;
 }
 
-.personal-activity, .team-activity {
+.personal-activity,
+.team-activity {
     align-self: start;
     display: flex;
     flex-direction: column;
@@ -82,11 +86,11 @@
     width: 100%;
 }
 
-.personal-activity > h2, .team-activity > h2 {
+.personal-activity > h2,
+.team-activity > h2 {
     display: flex;
     align-items: center;
     gap: 1rem;
-
 }
 
 .tasks-container {

@@ -10,7 +10,7 @@ import {
     ClipboardList,
     Activity,
 } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Spinner } from "@radix-ui/themes";
 
 export default function Dashboard() {
@@ -139,45 +139,57 @@ export default function Dashboard() {
                 </p>
             </div>
             <div className={DashboardStyles["hero-card-container"]}>
-                <HeroCard title={"Active Documents"} number={documents.length}>
-                    <div
-                        style={{ backgroundColor: "rgb(230, 235, 241)" }}
-                        className={DashboardStyles["hero-card-icon"]}
+                <Link to="/documents">
+                    <HeroCard
+                        title={"Active Documents"}
+                        number={documents.length}
                     >
-                        <FileText
-                            size={"40px"}
-                            color="var(--logo-color)"
+                        <div
+                            style={{ backgroundColor: "rgb(230, 235, 241)" }}
                             className={DashboardStyles["hero-card-icon"]}
-                        />
-                    </div>
-                </HeroCard>
-                <HeroCard title={"Pending Approvals"} number={pendingDocument}>
-                    <div
-                        style={{ backgroundColor: "rgb(172, 244, 190)" }}
-                        className={DashboardStyles["hero-card-icon"]}
+                        >
+                            <FileText
+                                size={"40px"}
+                                color="var(--logo-color)"
+                                className={DashboardStyles["hero-card-icon"]}
+                            />
+                        </div>
+                    </HeroCard>
+                </Link>
+                <Link to="/versions/pending">
+                    <HeroCard
+                        title={"Pending Approvals"}
+                        number={pendingDocument}
                     >
-                        <ClipboardClock
-                            size={"40px"}
-                            color="rgb(18, 69, 36)"
+                        <div
+                            style={{ backgroundColor: "rgb(172, 244, 190)" }}
                             className={DashboardStyles["hero-card-icon"]}
-                        />
-                    </div>
-                </HeroCard>
-                <HeroCard
-                    title={"Rejected Documents"}
-                    number={rejectedDocuments}
-                >
-                    <div
-                        style={{ backgroundColor: "rgb(249, 219, 215)" }}
-                        className={DashboardStyles["hero-card-icon"]}
+                        >
+                            <ClipboardClock
+                                size={"40px"}
+                                color="rgb(18, 69, 36)"
+                                className={DashboardStyles["hero-card-icon"]}
+                            />
+                        </div>
+                    </HeroCard>
+                </Link>
+                <Link to="/versions/rejected">
+                    <HeroCard
+                        title={"Rejected Documents"}
+                        number={rejectedDocuments}
                     >
-                        <CircleSlash
-                            size={"40px"}
-                            color="rgb(134, 25, 21)"
+                        <div
+                            style={{ backgroundColor: "rgb(249, 219, 215)" }}
                             className={DashboardStyles["hero-card-icon"]}
-                        />
-                    </div>
-                </HeroCard>
+                        >
+                            <CircleSlash
+                                size={"40px"}
+                                color="rgb(134, 25, 21)"
+                                className={DashboardStyles["hero-card-icon"]}
+                            />
+                        </div>
+                    </HeroCard>
+                </Link>
                 <Link to={`documents/${latestChange?.documentId ?? 1}`}>
                     <HeroCard
                         title={"Latest Change"}
@@ -207,31 +219,36 @@ export default function Dashboard() {
                     Recent Personal Tasks
                 </h2>
 
-                {recentUserVersions.length != 0 ?
-                <div className={DashboardStyles["tasks-container"]}>
-                    {recentUserVersions.map((version) => (
-                        <Task key={version.id} version={version} />
-                    ))}
+                {recentUserVersions.length != 0 ? (
+                    <div className={DashboardStyles["tasks-container"]}>
+                        {recentUserVersions.map((version) => (
+                            <Task key={version.id} version={version} />
+                        ))}
                     </div>
-                    : <div className={DashboardStyles["no-personal-activity"]}>
+                ) : (
+                    <div className={DashboardStyles["no-personal-activity"]}>
                         <h2>No recent changes</h2>
                     </div>
-                }
+                )}
             </div>
             <div className={DashboardStyles["team-activity"]}>
                 <h2>
                     <Activity size={"28px"} /> Recent Team Activity
                 </h2>
-                {recentAllVersions.length != 0 ?
+                {recentAllVersions.length != 0 ? (
                     <div className={DashboardStyles["tasks-container"]}>
-                            {recentAllVersions.map((version) => (
-                                <Task key={version.id} version={version} />
-                            ))}
+                        {recentAllVersions.map((version) => (
+                            <Task key={version.id} version={version} />
+                        ))}
                     </div>
-                    : <div className={DashboardStyles["spinner-container"]}>
-                        <Spinner size={3} className={DashboardStyles["spinner"]} />
+                ) : (
+                    <div className={DashboardStyles["spinner-container"]}>
+                        <Spinner
+                            size={3}
+                            className={DashboardStyles["spinner"]}
+                        />
                     </div>
-                }
+                )}
             </div>
         </div>
     );
