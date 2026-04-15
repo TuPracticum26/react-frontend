@@ -137,8 +137,8 @@ function UserCard({ id, username, roles }) {
     );
 }
 
-export default function ManageUsers({ allUsers = [], page, setPage }) {
-    console.log(allUsers);
+export default function ManageUsers({ pageUsers = [], page, setPage }) {
+    const users = useGetUsers();
     const [searchResult, setSearchResult] = useState("");
 
     return (
@@ -161,7 +161,7 @@ export default function ManageUsers({ allUsers = [], page, setPage }) {
             <div className={ManageUsersStyles["user-card-container"]}>
                 {searchResult != "" ? (
                     <>
-                        {allUsers.map((user) => {
+                        {users.map((user) => {
                             if (
                                 user.username
                                     .toLowerCase()
@@ -181,7 +181,7 @@ export default function ManageUsers({ allUsers = [], page, setPage }) {
                     </>
                 ) : (
                     <>
-                        {allUsers.map((user) => (
+                        {pageUsers.map((user) => (
                             <UserCard
                                 key={user.id}
                                 id={user.id}
@@ -202,7 +202,7 @@ export default function ManageUsers({ allUsers = [], page, setPage }) {
                         Prev
                     </button>
                     <button
-                        disabled={allUsers.length < 2}
+                        disabled={pageUsers.length < 2}
                         onClick={() => setPage(page + 1)}
                         className={ManageUsersStyles["page-button"]}
                     >
