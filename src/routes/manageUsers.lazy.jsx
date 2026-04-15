@@ -2,7 +2,7 @@ import rootStyles from "./root.module.css";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import ManageUsers from "../ManageUsers/ManageUsers.jsx";
 import { useQuery } from "@tanstack/react-query";
-import getUsers from "../api/getUsers.js";
+import getUsersPage from "../api/getUsersPage.js";
 import { useState } from "react";
 import { Flex, Skeleton, Text } from "@radix-ui/themes";
 
@@ -14,22 +14,22 @@ function ManageUsersRoute() {
     const [page, setPage] = useState(0);
     const { isLoading, data } = useQuery({
         queryKey: ["users", page],
-        queryFn: () => getUsers(page),
+        queryFn: () => getUsersPage(page),
         staleTime: 30000,
     });
-    let arrayOfFive = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let arrayOfTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     if (isLoading) {
         return (
-        <div className={rootStyles["loading-skeleton-container"]}>
-            <Text>
-                <Skeleton> Select to which user manage</Skeleton>
-            </Text>
+            <div className={rootStyles["loading-skeleton-container"]}>
+                <Text>
+                    <Skeleton> Select to which user manage</Skeleton>
+                </Text>
 
-            <Text style={{paddingTop:"0.3rem", paddingBottom:"0.3rem"}}>
-                <Skeleton> Lorem ipsum dolor </Skeleton>
-            </Text>
+                <Text style={{ paddingTop: "0.3rem", paddingBottom: "0.3rem" }}>
+                    <Skeleton> Lorem ipsum dolor </Skeleton>
+                </Text>
 
-                {arrayOfFive.map((i) => (
+                {arrayOfTen.map((i) => (
                     <LoadingSkeleton />
                 ))}
             </div>
@@ -38,7 +38,7 @@ function ManageUsersRoute() {
 
     return (
         <>
-            <ManageUsers allUsers={data} page={page} setPage={setPage} />
+            <ManageUsers pageUsers={data} page={page} setPage={setPage} />
         </>
     );
 }
@@ -48,7 +48,11 @@ function LoadingSkeleton() {
         <>
             <Flex direction="row" gap="1" justify="center" align="center">
                 <Text>
-                    <Skeleton height="60px"> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Praesent  </Skeleton>
+                    <Skeleton height="60px">
+                        {" "}
+                        Lorem ipsum dolor sit amet consectetur, adipisicing
+                        elit. Praesent{" "}
+                    </Skeleton>
                 </Text>
             </Flex>
         </>
