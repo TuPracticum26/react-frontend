@@ -11,6 +11,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VersionsIndexRouteImport } from './routes/versions/index'
+import { Route as VersionsRejectedRouteImport } from './routes/versions/rejected'
+import { Route as VersionsPendingRouteImport } from './routes/versions/pending'
+import { Route as VersionsDraftsRouteImport } from './routes/versions/drafts'
+import { Route as VersionsApprovedRouteImport } from './routes/versions/approved'
 
 const RegisterLazyRouteImport = createFileRoute('/register')()
 const ManageUsersLazyRouteImport = createFileRoute('/manageUsers')()
@@ -49,6 +54,31 @@ const IndexLazyRoute = IndexLazyRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+const VersionsIndexRoute = VersionsIndexRouteImport.update({
+  id: '/versions/',
+  path: '/versions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VersionsRejectedRoute = VersionsRejectedRouteImport.update({
+  id: '/versions/rejected',
+  path: '/versions/rejected',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VersionsPendingRoute = VersionsPendingRouteImport.update({
+  id: '/versions/pending',
+  path: '/versions/pending',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VersionsDraftsRoute = VersionsDraftsRouteImport.update({
+  id: '/versions/drafts',
+  path: '/versions/drafts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VersionsApprovedRoute = VersionsApprovedRouteImport.update({
+  id: '/versions/approved',
+  path: '/versions/approved',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
@@ -57,6 +87,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/versions/approved': typeof VersionsApprovedRoute
+  '/versions/drafts': typeof VersionsDraftsRoute
+  '/versions/pending': typeof VersionsPendingRoute
+  '/versions/rejected': typeof VersionsRejectedRoute
+  '/versions/': typeof VersionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
@@ -65,6 +100,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/versions/approved': typeof VersionsApprovedRoute
+  '/versions/drafts': typeof VersionsDraftsRoute
+  '/versions/pending': typeof VersionsPendingRoute
+  '/versions/rejected': typeof VersionsRejectedRoute
+  '/versions': typeof VersionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -74,6 +114,11 @@ export interface FileRoutesById {
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/versions/approved': typeof VersionsApprovedRoute
+  '/versions/drafts': typeof VersionsDraftsRoute
+  '/versions/pending': typeof VersionsPendingRoute
+  '/versions/rejected': typeof VersionsRejectedRoute
+  '/versions/': typeof VersionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -84,6 +129,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/versions/approved'
+    | '/versions/drafts'
+    | '/versions/pending'
+    | '/versions/rejected'
+    | '/versions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -92,6 +142,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/versions/approved'
+    | '/versions/drafts'
+    | '/versions/pending'
+    | '/versions/rejected'
+    | '/versions'
   id:
     | '__root__'
     | '/'
@@ -100,6 +155,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/versions/approved'
+    | '/versions/drafts'
+    | '/versions/pending'
+    | '/versions/rejected'
+    | '/versions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -109,6 +169,11 @@ export interface RootRouteChildren {
   LoginLazyRoute: typeof LoginLazyRoute
   ManageUsersLazyRoute: typeof ManageUsersLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
+  VersionsApprovedRoute: typeof VersionsApprovedRoute
+  VersionsDraftsRoute: typeof VersionsDraftsRoute
+  VersionsPendingRoute: typeof VersionsPendingRoute
+  VersionsRejectedRoute: typeof VersionsRejectedRoute
+  VersionsIndexRoute: typeof VersionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -155,6 +220,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/versions/': {
+      id: '/versions/'
+      path: '/versions'
+      fullPath: '/versions/'
+      preLoaderRoute: typeof VersionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/versions/rejected': {
+      id: '/versions/rejected'
+      path: '/versions/rejected'
+      fullPath: '/versions/rejected'
+      preLoaderRoute: typeof VersionsRejectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/versions/pending': {
+      id: '/versions/pending'
+      path: '/versions/pending'
+      fullPath: '/versions/pending'
+      preLoaderRoute: typeof VersionsPendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/versions/drafts': {
+      id: '/versions/drafts'
+      path: '/versions/drafts'
+      fullPath: '/versions/drafts'
+      preLoaderRoute: typeof VersionsDraftsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/versions/approved': {
+      id: '/versions/approved'
+      path: '/versions/approved'
+      fullPath: '/versions/approved'
+      preLoaderRoute: typeof VersionsApprovedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -165,6 +265,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginLazyRoute: LoginLazyRoute,
   ManageUsersLazyRoute: ManageUsersLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,
+  VersionsApprovedRoute: VersionsApprovedRoute,
+  VersionsDraftsRoute: VersionsDraftsRoute,
+  VersionsPendingRoute: VersionsPendingRoute,
+  VersionsRejectedRoute: VersionsRejectedRoute,
+  VersionsIndexRoute: VersionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
