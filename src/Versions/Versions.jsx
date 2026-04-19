@@ -35,13 +35,16 @@ export default function Versions({
                 (version) => version.status == "PENDING",
             );
         }
+        if (functionality == "Team") {
+            copyOfAllUserVersions = versionsPage;
+        }
     }
 
     const [searchResult, setSearchResult] = useState("");
 
     return (
         <div className={VersionsStyles["versions-component"]}>
-            <h1>Browse your versions</h1>
+            <h1>Browse {functionality ? functionality : "your" } versions</h1>
             <input
                 autoFocus={true}
                 className={VersionsStyles["search-bar"]}
@@ -94,7 +97,7 @@ export default function Versions({
                     })
                 )}
             </div>
-            {searchResult == "" && !functionality ? (
+            {searchResult == "" && functionality == "Team" ? (
                 <div className={VersionsStyles["page-buttons-container"]}>
                     <button
                         disabled={page <= 0}
@@ -104,7 +107,7 @@ export default function Versions({
                         Prev
                     </button>
                     <button
-                        disabled={versionsPage.length < 2}
+                        disabled={versionsPage.length < 10}
                         onClick={() => setPage(page + 1)}
                         className={VersionsStyles["page-button"]}
                     >

@@ -202,7 +202,7 @@ export default function ManageUsers({ pageUsers = [], page, setPage }) {
                         Prev
                     </button>
                     <button
-                        disabled={pageUsers.length < 2}
+                        disabled={pageUsers.length < 10}
                         onClick={() => setPage(page + 1)}
                         className={ManageUsersStyles["page-button"]}
                     >

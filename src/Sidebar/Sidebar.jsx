@@ -6,11 +6,12 @@ import {
     ClipboardClock,
     BadgeCheck,
     FileStack,
+    Users,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export default function Sidebar() {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(localStorage.getItem("token")).user ?? {id: 0, username: "", roles: ["none"]};
     return (
         <aside>
             <div className={SidebarStyles["sidebar"]}>
@@ -51,6 +52,19 @@ export default function Sidebar() {
                                             className={SidebarStyles.icon}
                                         />{" "}
                                         &nbsp; Your versions
+                                    </h2>
+                                </div>
+                            </Link>
+                            <Link
+                                to="/versions/team"
+                                className={SidebarStyles["document-links"]}
+                            >
+                                <div className={SidebarStyles["link"]}>
+                                    <h2>
+                                        <Users
+                                            className={SidebarStyles.icon}
+                                        />{" "}
+                                        &nbsp; Team Versions
                                     </h2>
                                 </div>
                             </Link>
