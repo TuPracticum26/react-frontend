@@ -1,18 +1,36 @@
 import DocumentsStyles from "./Documents.module.css";
 import useGetDocuments from "../hooks/useGetDocuments";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export default function Documents() {
-    // ✅ Hook-ът е най-отгоре, без условия
-    const documents = useGetDocuments();
+    const navigate = useNavigate();
 
-    // ✅ Сега могат да дойдат проверките
+    // 1. Извличаме токена (същата логика като в Sidebar/Header)
+    const tokenData = localStorage.getItem("token");
+    const userData = tokenData ? JSON.parse(tokenData) : null;
+    const token = userData?.token;
+
+    // 2. Подаваме токена на хука (увери се, че хукът useGetDocuments го приема)
+    const documents = useGetDocuments(token);
+
+    // 3. Защита: Ако няма токен, пренасочваме към логин
+    useEffect(() => {
+        if (!token) {
+            navigate({ to: "/login" });
+        }
+    }, [token, navigate]);
+
+    // Ако все още нямаме токен, не рендираме нищо, докато трае пренасочването
+    if (!token) return null;
+
+    // Проверка за правилно зареден масив
     if (!Array.isArray(documents)) {
         return (
             <div className={DocumentsStyles.documents}>
                 <h1>All Documents</h1>
                 <div className={DocumentsStyles.error}>
-                    Грешка при зареждане на документите
+                    Грешка при зареждане на документите или липса на права.
                 </div>
             </div>
         );
@@ -44,9 +62,15 @@ export default function Documents() {
                     </Link>
                 ))}
             </div>
-            <Link to="/createDocument">
-                <button>Create Document</button>
-            </Link>
+            
+            {/* Бутон за създаване, често скрит за READER роля */}
+            {userData?.user?.roles?.includes("ADMIN") || userData?.user?.roles?.includes("AUTHOR") ? (
+                <Link to="/createDocument">
+                    <button className={DocumentsStyles["create-btn"]}>
+                        Create Document
+                    </button>
+                </Link>
+            ) : null}
         </div>
     );
 }

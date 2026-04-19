@@ -1,21 +1,8 @@
-import { Link, useLocation } from "@tanstack/react-router";
 import DocumentImage from "../../public/Home_Document.png";
 
-export default function Home({ children }) {
-    const token = JSON.parse(localStorage.getItem("token")).user;
-    const pathname = useLocation({
-        select: (location) => location.pathname,
-    });
-    const buttonStyle = {
-        width: "100%",
-        padding: "12px",
-        borderRadius: "8px",
-        border: "none",
-        background: "#4f64dc",
-        color: "white",
-        fontWeight: "bold",
-        cursor: "pointer",
-    };
+export default function Home() {
+    // Вече не ни трябва проверка за token тук, рутерът в __root.jsx се грижи за това.
+    // Така Header-ът и Sidebar-ът ще са винаги видими около този компонент.
 
     return (
         <div
@@ -27,80 +14,51 @@ export default function Home({ children }) {
                 textAlign: "center",
                 width: "100%",
                 height: "100%",
+                backgroundColor: "var(--hover-color)", // Използваме твоя цвят от темата
+                padding: "2rem",
             }}
         >
-            {!token ? (
-                pathname == "/login" || pathname == "/register" ? (
-                    <>{children}</>
-                ) : (
-                    <>
-                        <h1>Welcome to the Document Manager App!</h1>
-                        <p>Please log in to continue</p>
-                        <Link to="/login" className="RouterLink">
-                            <button style={buttonStyle}>Login</button>
-                        </Link>
-                        <p style={{ fontStyle: "14px", color: "#555" }}>
-                            You don't have an account yet?{" "}
-                            <Link
-                                to="/register"
-                                style={{
-                                    color: "#4f64dc",
-                                    textDecoration: "none",
-                                    fontweight: "bold",
-                                }}
-                            >
-                                Register here.
-                            </Link>
-                        </p>
-                    </>
-                )
-            ) : (
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2rem",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <h1 style={{ color: "var(--logo-color)", fontSize: "2.5rem", margin: 0 }}>
+                    Welcome to the Document Manager App
+                </h1>
+                
+                <h2 style={{ fontWeight: "400", color: "#555", maxWidth: "600px" }}>
+                    Navigate through the menus to read/write/alter Documents!
+                </h2>
+
                 <div
                     style={{
-                        backgroundColor: "var(--hover-color)",
-                        padding: "2rem",
-                        height: "100%",
-                        width: "80%",
+                        backgroundColor: "var(--secondary-color-soft)",
+                        borderRadius: "50%", // Правим перфектен кръг
+                        width: "550px",
+                        height: "550px",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
                     }}
                 >
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "2rem",
-                            justifyContent: "center",
-                            alignItems: "center",
+                    <img
+                        src={DocumentImage}
+                        alt="Home Document"
+                        style={{ 
+                            maxWidth: "400px", 
+                            height: "auto",
+                            filter: "drop-shadow(0 5px 15px rgba(0,0,0,0.1))" 
                         }}
-                    >
-                        <h1 style={{ color: "var(--logo-color)" }}>
-                            Welcome to the Document Manager App
-                        </h1>
-                        <h2>
-                            Navigate through the menus to read/write/alter
-                            Documents!
-                        </h2>
-                        <div
-                            style={{
-                                backgroundColor: "var(--secondary-color-soft)",
-                                borderRadius: "100vw",
-                                minWidth: "600px",
-                                minHeight: "600px",
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "2rem",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-                            <img
-                                src={DocumentImage}
-                                alt=""
-                                style={{ maxWidth: "400px" }}
-                            />
-                        </div>
-                    </div>
+                    />
                 </div>
-            )}
+            </div>
         </div>
     );
 }

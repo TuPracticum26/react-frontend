@@ -8,11 +8,25 @@ import useUpdateDocument from "../hooks/useUpdateDocument";
 export default function DocumentEditor() {
     const { documentId } = useParams({ from: "/documents/$documentId" });
     const navigate = useNavigate();
-    const { document, loading } = useGetDocument(documentId);
-    const { updateDocument, isUpdating } = useUpdateDocument();
+
+    // 1. Взимаме токена от localStorage по същия начин като в Header/Sidebar
+    const tokenData = localStorage.getItem("token");
+    const userData = tokenData ? JSON.parse(tokenData) : null;
+    const token = userData?.token; // Предполагаме, че структурата е { token: "...", user: {...} }
+
+    // 2. Подаваме токена на хуковете (увери се, че хуковете ти го приемат)
+    const { document, loading, error } = useGetDocument(documentId, token);
+    const { updateDocument, isUpdating } = useUpdateDocument(token);
 
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
+
+    // 3. Ако няма токен или има грешка в аутентикацията, пренасочваме към логин
+    useEffect(() => {
+        if (!token) {
+            navigate({ to: "/login" });
+        }
+    }, [token, navigate]);
 
     // Зареждане на документа
     useEffect(() => {
@@ -25,10 +39,12 @@ export default function DocumentEditor() {
     const handleContentChange = (newContent) => {
         setContent(newContent);
 
-        // Автоматично запазване при спиране на писането
+        // Автоматично запазване (Debounce логика)
         if (window.contentTimeout) clearTimeout(window.contentTimeout);
         window.contentTimeout = setTimeout(() => {
-            updateDocument(documentId, { content: newContent });
+            if (token) {
+                updateDocument(documentId, { content: newContent });
+            }
         }, 1500);
     };
 
@@ -36,10 +52,11 @@ export default function DocumentEditor() {
         const newTitle = e.target.value;
         setTitle(newTitle);
 
-        // Автоматично запазване на заглавието
         if (window.titleTimeout) clearTimeout(window.titleTimeout);
         window.titleTimeout = setTimeout(() => {
-            updateDocument(documentId, { title: newTitle });
+            if (token) {
+                updateDocument(documentId, { title: newTitle });
+            }
         }, 1000);
     };
 
@@ -47,8 +64,15 @@ export default function DocumentEditor() {
         navigate({ to: "/documents" });
     };
 
+    // Обработка на състояния
+    if (!token) return null;
+    
     if (loading) {
         return <div className={DocumentsStyles.loading}>Зареждане на документа...</div>;
+    }
+
+    if (error) {
+        return <div className={DocumentsStyles.error}>Грешка при зареждане на документа.</div>;
     }
 
     return (
