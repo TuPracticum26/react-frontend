@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 export default function Header() {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(localStorage.getItem("token")).user;
     const navigate = useNavigate();
     const allDocuments = useGetDocuments();
     const [searchResult, setSearchResult] = useState("");

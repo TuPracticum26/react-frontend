@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import DocumentImage from "../../public/Home_Document.png";
 
 export default function Home({ children }) {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(localStorage.getItem("token")).user;
     const pathname = useLocation({
         select: (location) => location.pathname,
     });

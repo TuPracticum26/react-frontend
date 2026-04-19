@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { Spinner } from "@radix-ui/themes";
 
 export default function Dashboard() {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(localStorage.getItem("token")).user;
     const documents = useGetDocuments();
     const [userDocumentsVersions, setUserDocumentsVersions] = useState([]);
     const [allDocumentsVersions, setAllDocumentsVersions] = useState([]);
@@ -62,7 +62,12 @@ export default function Dashboard() {
     async function getUserVersions(docId, whichDocuments) {
         const userVersionArray = [];
         const allVersionArray = [];
-        const res = await fetch(`/api/v1/documents/${docId}/history`);
+        const res = await fetch(`/api/v1/documents/${docId}/history`, {
+            headers: {
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))?.token || ""}`,
+                "Content-Type": "application/json",
+            },
+        });
         const data = await res.json();
         const versions = data.versions;
 

@@ -9,7 +9,7 @@ export default function Versions({
     setPage = () => {},
     functionality,
 }) {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(localStorage.getItem("token")).user;
     const allUserVersions = useGetUserVersion(token.id);
 
     let copyOfAllUserVersions = allUserVersions;

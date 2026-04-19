@@ -7,9 +7,10 @@ export default function useUpdateDocument() {
         setIsUpdating(true);
         try {
             const response = await fetch(`/api/v1/documents/${documentId}`, {
-                method: 'PATCH',
+                method: "PATCH",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))?.token || ""}`,
                 },
                 body: JSON.stringify(updates),
             });

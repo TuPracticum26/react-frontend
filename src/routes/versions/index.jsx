@@ -11,7 +11,7 @@ export const Route = createFileRoute("/versions/")({
 });
 
 function ManageVersions() {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(localStorage.getItem("token")).user;
     const [page, setPage] = useState(0);
     const { isLoading, data } = useQuery({
         queryKey: ["versions", page],
