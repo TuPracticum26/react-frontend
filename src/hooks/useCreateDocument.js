@@ -15,7 +15,7 @@ export default function useCreateDocument() {
         } catch (err) {
             setError(err.message);
             setIsSaving(false);
-            throw err;
+            throw err; // Прехвърляме грешката към компонента
         }
     };
 
