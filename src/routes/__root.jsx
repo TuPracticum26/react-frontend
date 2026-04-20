@@ -1,57 +1,65 @@
 import { createRootRoute, Outlet, useLocation } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Theme } from "@radix-ui/themes";
+
 import Header from "../Header/Header";
 import Sidebar from "../Sidebar/Sidebar";
-import rootStyles from "./root.module.css";
 import Home from "../Home/Home";
-import { Theme } from "@radix-ui/themes";
+
+import rootStyles from "./root.module.css";
 import NotFoundImage from "../../public/Not_Found.png";
 
-// Функция за проверка на токен - ще се изпълнява при всяко рендериране
-const isAuthenticated = () => {
-    return !!localStorage.getItem("token");
-};
+import { isAuthenticated } from "../utils/auth"; 
 
 export const Route = createRootRoute({
     component: () => {
-        const tokenExists = isAuthenticated(); // Проверяваме при всяко рендериране
+        const isAuth = isAuthenticated();
 
-        return (
-            <>
-                {tokenExists ? (
-                    <>
-                        <Header />
-                        <div className={rootStyles.body}>
-                            <Sidebar />
-                            <main>
-                                <Theme>
-                                    <Outlet />
-                                </Theme>
-                            </main>
-                        </div>
-                    </>
-                ) : (
+        // Ако потребителят НЕ е логнат, показваме Home компонента (Landing/Login/Register)
+        if (!isAuth) {
+            return (
+                <>
                     <Home>
                         <Outlet />
                     </Home>
-                )}
+                    <TanStackRouterDevtools />
+                    <ReactQueryDevtools />
+                </>
+            );
+        }
+
+        // Ако потребителят Е логнат, показваме пълната структура на приложението
+        return (
+            <div className={rootStyles["app-container"]}>
+                <Header />
+                <div className={rootStyles.body}>
+                    <Sidebar />
+                    <main className={rootStyles["content-outlet"]}>
+                        <Theme>
+                            <Outlet />
+                        </Theme>
+                    </main>
+                </div>
                 <TanStackRouterDevtools />
                 <ReactQueryDevtools />
-            </>
+            </div>
         );
     },
     notFoundComponent: () => {
         const pathname = useLocation({
             select: (location) => location.pathname,
         });
+
         return (
             <div className={rootStyles["not-found-container"]}>
                 <h1>404</h1>
                 <p>{pathname}</p>
                 <h2>Provided link to page was not found!</h2>
-                <h4>Click <span>here</span> to go back to the home page!</h4>
-                <img src={NotFoundImage} alt="" />
+                <h4>
+                    Click <span>here</span> to go back to the home page!
+                </h4>
+                <img src={NotFoundImage} alt="Not Found" />
             </div>
         );
     },

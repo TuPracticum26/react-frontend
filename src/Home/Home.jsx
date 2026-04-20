@@ -1,11 +1,11 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import DocumentImage from "../../public/Home_Document.png";
+import { isAuthenticated } from "../utils/auth";
 
 export default function Home({ children }) {
-    const token = JSON.parse(localStorage.getItem("token")).user;
-    const pathname = useLocation({
-        select: (location) => location.pathname,
-    });
+    const isAuth = isAuthenticated();
+    const { pathname } = useLocation();
+
     const buttonStyle = {
         width: "100%",
         padding: "12px",
@@ -15,7 +15,13 @@ export default function Home({ children }) {
         color: "white",
         fontWeight: "bold",
         cursor: "pointer",
+        marginTop: "1rem"
     };
+
+    // 1. Ако потребителят е на път /login или /register, показваме само тях (children)
+    if (!isAuth && (pathname === "/login" || pathname === "/register")) {
+        return <>{children}</>;
+    }
 
     return (
         <div
@@ -27,77 +33,72 @@ export default function Home({ children }) {
                 textAlign: "center",
                 width: "100%",
                 height: "100%",
+                backgroundColor: isAuth ? "var(--hover-color)" : "transparent",
+                padding: "2rem",
             }}
         >
-            {!token ? (
-                pathname == "/login" || pathname == "/register" ? (
-                    <>{children}</>
-                ) : (
-                    <>
-                        <h1>Welcome to the Document Manager App!</h1>
-                        <p>Please log in to continue</p>
-                        <Link to="/login" className="RouterLink">
-                            <button style={buttonStyle}>Login</button>
-                        </Link>
-                        <p style={{ fontStyle: "14px", color: "#555" }}>
-                            You don't have an account yet?{" "}
-                            <Link
-                                to="/register"
-                                style={{
-                                    color: "#4f64dc",
-                                    textDecoration: "none",
-                                    fontweight: "bold",
-                                }}
-                            >
-                                Register here.
-                            </Link>
-                        </p>
-                    </>
-                )
-            ) : (
-                <div
-                    style={{
-                        backgroundColor: "var(--hover-color)",
-                        padding: "2rem",
-                        height: "100%",
-                        width: "80%",
-                    }}
-                >
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "2rem",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <h1 style={{ color: "var(--logo-color)" }}>
-                            Welcome to the Document Manager App
-                        </h1>
-                        <h2>
-                            Navigate through the menus to read/write/alter
-                            Documents!
-                        </h2>
-                        <div
+            {!isAuth ? (
+                // 2. Екран за НЕЛОГНАТ потребител (Landing Page)
+                <div style={{ maxWidth: "400px" }}>
+                    <h1>Welcome to the Document Manager App!</h1>
+                    <p>Please log in to continue</p>
+                    <Link to="/login" className="RouterLink">
+                        <button style={buttonStyle}>Login</button>
+                    </Link>
+                    <p style={{ fontSize: "14px", color: "#555", marginTop: "1rem" }}>
+                        You don't have an account yet?{" "}
+                        <Link
+                            to="/register"
                             style={{
-                                backgroundColor: "var(--secondary-color-soft)",
-                                borderRadius: "100vw",
-                                minWidth: "600px",
-                                minHeight: "600px",
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "2rem",
-                                justifyContent: "center",
-                                alignItems: "center",
+                                color: "#4f64dc",
+                                textDecoration: "none",
+                                fontWeight: "bold",
                             }}
                         >
-                            <img
-                                src={DocumentImage}
-                                alt=""
-                                style={{ maxWidth: "400px" }}
-                            />
-                        </div>
+                            Register here.
+                        </Link>
+                    </p>
+                </div>
+            ) : (
+                // 3. Екран за ЛОГНАТ потребител (Dashboard Home)
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "2rem",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <h1 style={{ color: "var(--logo-color)", fontSize: "2.5rem", margin: 0 }}>
+                        Welcome to the Document Manager App
+                    </h1>
+                    
+                    <h2 style={{ fontWeight: "400", color: "#555", maxWidth: "600px" }}>
+                        Navigate through the menus to read/write/alter Documents!
+                    </h2>
+
+                    <div
+                        style={{
+                            backgroundColor: "var(--secondary-color-soft)",
+                            borderRadius: "50%",
+                            width: "550px",
+                            height: "550px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+                        }}
+                    >
+                        <img
+                            src={DocumentImage}
+                            alt="Home Document"
+                            style={{ 
+                                maxWidth: "400px", 
+                                height: "auto",
+                                filter: "drop-shadow(0 5px 15px rgba(0,0,0,0.1))" 
+                            }}
+                        />
                     </div>
                 </div>
             )}

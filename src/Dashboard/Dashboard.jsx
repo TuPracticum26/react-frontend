@@ -12,123 +12,82 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Spinner } from "@radix-ui/themes";
+import { getUser, getToken } from "../utils/auth"; 
 
 export default function Dashboard() {
-    const token = JSON.parse(localStorage.getItem("token")).user;
-    const documents = useGetDocuments();
+    const user = getUser();
+    const { documents, loading: docsLoading } = useGetDocuments(); // Приемаме, че хукът връща и loading
+    
     const [userDocumentsVersions, setUserDocumentsVersions] = useState([]);
     const [allDocumentsVersions, setAllDocumentsVersions] = useState([]);
-    const [pendingDocument, setPendingDocuments] = useState(0);
-    const [rejectedDocuments, setRejectedDocuments] = useState(0);
-    const recentUserVersions = userDocumentsVersions
-        .sort(sortByLatestVersion)
-        .reverse()
+    const [isLoadingData, setIsLoadingData] = useState(false);
+
+    // Безопасно сортиране
+    const recentUserVersions = [...userDocumentsVersions]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 3);
+
     const latestChange = recentUserVersions[0];
-    const recentAllVersions = allDocumentsVersions
-        .sort(sortByLatestVersion)
-        .reverse()
-        .slice(0, 5);
+
     useEffect(() => {
-        getUserData();
-        return () => {
-            setUserDocumentsVersions([]);
-        };
-    }, [documents]);
+        // Стартираме само ако имаме документи и не зареждаме в момента
+        if (documents && documents.length > 0 && user && !isLoadingData) {
+            getUserData();
+        }
+    }, [documents]); // Махаме 'user' от депенденситата, за да не цикли
 
     async function getUserData() {
-        const allUserVersions = await Promise.all(
-            documents.map(async (document) => {
-                const { userVersionArray } = await getUserVersions(document.id);
-                return userVersionArray;
-            }),
-        );
-        const userVersions = allUserVersions.flat();
-        setUserDocumentsVersions(userVersions);
+        const tokenString = getToken();
+        if (!tokenString) return;
 
-        const allVersions = await Promise.all(
-            documents.map(async (document) => {
-                const { allVersionArray } = await getUserVersions(
-                    document.id,
-                    "all",
-                );
-                return allVersionArray;
-            }),
-        );
-        const setAllVersions = allVersions.flat();
-        setAllDocumentsVersions(setAllVersions);
-    }
+        setIsLoadingData(true);
+        try {
+            const allPromises = documents.map(doc => 
+                fetch(`/api/v1/documents/${doc.id}/history`, {
+                    headers: {
+                        Authorization: `Bearer ${tokenString}`,
+                        "Content-Type": "application/json",
+                    },
+                }).then(res => res.ok ? res.json() : null)
+            );
 
-    async function getUserVersions(docId, whichDocuments) {
-        const userVersionArray = [];
-        const allVersionArray = [];
-        const res = await fetch(`/api/v1/documents/${docId}/history`, {
-            headers: {
-                Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))?.token || ""}`,
-                "Content-Type": "application/json",
-            },
-        });
-        const data = await res.json();
-        const versions = data.versions;
+            const histories = await Promise.all(allPromises);
+            
+            const allVers = [];
+            const userVers = [];
 
-        if (whichDocuments == "all") {
-            versions.map((version) => {
-                allVersionArray.push(version);
-            });
-        }
-
-        versions.map((version) => {
-            if (version.createdByUsername == token.username) {
-                userVersionArray.push(version);
-            }
-        });
-        return { userVersionArray, allVersionArray };
-    }
-
-    useEffect(() => {
-        setPendingDocuments(getTypeDocuments(userDocumentsVersions, "PENDING"));
-        setRejectedDocuments(
-            getTypeDocuments(userDocumentsVersions, "REJECTED"),
-        );
-    }, [userDocumentsVersions]);
-
-    function getTypeDocuments(userDocuments = [], type) {
-        let typeOfDocuments = 0;
-        userDocuments.map((document) => {
-            if (document.status == type) {
-                typeOfDocuments++;
-            }
-        });
-        return typeOfDocuments;
-    }
-
-    function sortByLatestVersion(a, b) {
-        if (a.createdAt.slice(0, 10) < b.createdAt.slice(0, 10)) {
-            return -1;
-        }
-        if (a.createdAt.slice(0, 10) > b.createdAt.slice(0, 10)) {
-            return 1;
-        }
-        return 0;
-    }
-
-    function HeroCard({ children, title, number, content }) {
-        return (
-            <div
-                className={
-                    DashboardStyles[
-                        content ? "hero-card-latest-change" : "hero-card"
-                    ]
+            histories.forEach(data => {
+                if (data && (Array.isArray(data) || data.versions)) {
+                    const versionsList = Array.isArray(data) ? data : data.versions;
+                    versionsList.forEach(v => {
+                        allVers.push(v);
+                        if (v.createdByUsername === user.username || v.authorUsername === user.username) {
+                            userVers.push(v);
+                        }
+                    });
                 }
-            >
-                <div>{children}</div>
-                <p>{title}</p>
-                <h2>{number}</h2>
-                {content ? (
-                    <p className={DashboardStyles["latest-change-content"]}>
-                        {content}
-                    </p>
-                ) : null}
+            });
+
+            setAllDocumentsVersions(allVers);
+            setUserDocumentsVersions(userVers);
+        } catch (error) {
+            console.error("Dashboard error:", error);
+        } finally {
+            setIsLoadingData(false);
+        }
+    }
+
+    // Помощна функция за броене
+    const getCount = (status) => userDocumentsVersions.filter(v => v.status === status).length;
+    const recentAllVersions = [...allDocumentsVersions]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 9);
+
+    if (docsLoading || isLoadingData) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Spinner size="3" />
+                <p style={{ marginLeft: '10px' }}>Зареждане на таблото...</p>
             </div>
         );
     }
@@ -137,124 +96,80 @@ export default function Dashboard() {
         <div className={DashboardStyles.dashboard}>
             <div className={DashboardStyles["legend"]}>
                 <h1>SAP Documents</h1>
-                <p>
-                    A centralized platform for submitting, reviewing, and
-                    managing documents. Keep track of approvals, rejections, and
-                    updates to ensure a smooth and efficient workflow.
-                </p>
+                <p>Welcome back, <strong>{user?.username}</strong>!</p>
             </div>
+            
             <div className={DashboardStyles["hero-card-container"]}>
                 <Link to="/documents">
-                    <HeroCard
-                        title={"Active Documents"}
-                        number={documents.length}
-                    >
-                        <div
-                            style={{ backgroundColor: "rgb(230, 235, 241)" }}
-                            className={DashboardStyles["hero-card-icon"]}
-                        >
-                            <FileText
-                                size={"40px"}
-                                color="var(--logo-color)"
-                                className={DashboardStyles["hero-card-icon"]}
-                            />
+                    <HeroCard title="Active Documents" number={documents?.length}>
+                        <div className={DashboardStyles["hero-card-icon"]} style={{ backgroundColor: "#e6ebf1" }}>
+                            <FileText size="40px" color="#2b5a9e" />
                         </div>
                     </HeroCard>
                 </Link>
-                <Link to="/versions/pending">
-                    <HeroCard
-                        title={"Pending Approvals"}
-                        number={pendingDocument}
-                    >
-                        <div
-                            style={{ backgroundColor: "rgb(172, 244, 190)" }}
-                            className={DashboardStyles["hero-card-icon"]}
-                        >
-                            <ClipboardClock
-                                size={"40px"}
-                                color="rgb(18, 69, 36)"
-                                className={DashboardStyles["hero-card-icon"]}
-                            />
-                        </div>
-                    </HeroCard>
-                </Link>
-                <Link to="/versions/rejected">
-                    <HeroCard
-                        title={"Rejected Documents"}
-                        number={rejectedDocuments}
-                    >
-                        <div
-                            style={{ backgroundColor: "rgb(249, 219, 215)" }}
-                            className={DashboardStyles["hero-card-icon"]}
-                        >
-                            <CircleSlash
-                                size={"40px"}
-                                color="rgb(134, 25, 21)"
-                                className={DashboardStyles["hero-card-icon"]}
-                            />
-                        </div>
-                    </HeroCard>
-                </Link>
-                <Link to={`documents/${latestChange?.documentId ?? 1}`}>
-                    <HeroCard
-                        title={"Latest Change"}
-                        number={latestChange?.createdAt?.slice(0, 10) ?? null}
-                        content={
-                            (latestChange?.content?.length ?? 0 > 35)
-                                ? latestChange.content.slice(0, 35) + "…"
-                                : (latestChange?.content ?? null)
-                        }
-                    >
-                        <div
-                            style={{ backgroundColor: "rgb(249, 245, 215)" }}
-                            className={DashboardStyles["hero-card-icon"]}
-                        >
-                            <ClockArrowUp
-                                size={"40px"}
-                                color="rgb(134, 115, 21)"
-                                className={DashboardStyles["hero-card-icon"]}
-                            />
-                        </div>
-                    </HeroCard>
-                </Link>
-            </div>
-            <div className={DashboardStyles["personal-activity"]}>
-                <h2>
-                    <ClipboardList size={"28px"} />
-                    Recent Personal Tasks
-                </h2>
 
-                {recentUserVersions.length != 0 ? (
-                    <div className={DashboardStyles["tasks-container"]}>
-                        {recentUserVersions.map((version) => (
-                            <Task key={version.id} version={version} />
-                        ))}
+                <Link to="/versions/pending">
+                    <HeroCard title="Pending Approvals" number={getCount("PENDING")}>
+                        <div className={DashboardStyles["hero-card-icon"]} style={{ backgroundColor: "#acf4be" }}>
+                            <ClipboardClock size="40px" color="#124524" />
+                        </div>
+                    </HeroCard>
+                </Link>
+
+                <Link to="/versions/rejected">
+                    <HeroCard title="Rejected Documents" number={getCount("REJECTED")}>
+                        <div className={DashboardStyles["hero-card-icon"]} style={{ backgroundColor: "#f9dbd7" }}>
+                            <CircleSlash size="40px" color="#861915" />
+                        </div>
+                    </HeroCard>
+                </Link>
+
+                <HeroCard 
+                    title="Latest Change" 
+                    number={latestChange?.createdAt ? new Date(latestChange.createdAt).toLocaleDateString() : "N/A"}
+                    content={latestChange?.content ? latestChange.content.replace(/<[^>]*>/g, '').substring(0, 35) + "..." : "No recent changes"}
+                >
+                    <div className={DashboardStyles["hero-card-icon"]} style={{ backgroundColor: "#f9f5d7" }}>
+                        <ClockArrowUp size="40px" color="#867315" />
                     </div>
-                ) : (
-                    <div className={DashboardStyles["no-personal-activity"]}>
-                        <h2>No recent changes</h2>
-                    </div>
-                )}
+                </HeroCard>
             </div>
+
+            <div className={DashboardStyles["personal-activity"]}>
+                <h2><ClipboardList size="28px" /> Recent Personal Tasks</h2>
+                <div className={DashboardStyles["tasks-container"]}>
+                    {recentUserVersions.length > 0 ? (
+                        recentUserVersions.map(v => <Task key={v.id} version={v} />)
+                    ) : <p>No recent activity found.</p>}
+                </div>
+            </div>
+
             <div className={DashboardStyles["team-activity"]}>
-                <h2>
-                    <Activity size={"28px"} /> Recent Team Activity
-                </h2>
-                {recentAllVersions.length != 0 ? (
-                    <div className={DashboardStyles["tasks-container"]}>
-                        {recentAllVersions.map((version) => (
-                            <Task key={version.id} version={version} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className={DashboardStyles["spinner-container"]}>
-                        <Spinner
-                            size={3}
-                            className={DashboardStyles["spinner"]}
-                        />
-                    </div>
-                )}
+                <h2><Activity size="28px" /> Recent Team Activity</h2>
+                <div className={DashboardStyles["tasks-container"]}>
+                    {recentAllVersions.length > 0 ? (
+                        recentAllVersions.map(v => (
+                            <Task 
+                                key={v.id} 
+                                version={v} 
+                                showAuthor={true} // Можеш да добавиш проп, за да показваш кой е направил промяната
+                            />
+                        ))
+                    ) : <p>No team activity recorded.</p>}
+                </div>
             </div>
+        </div>
+    );
+}
+
+// HeroCard остава същия...
+function HeroCard({ children, title, number, content }) {
+    return (
+        <div className={DashboardStyles[content ? "hero-card-latest-change" : "hero-card"]}>
+            <div>{children}</div>
+            <p>{title}</p>
+            <h2>{number ?? 0}</h2>
+            {content && <p className={DashboardStyles["latest-change-content"]}>{content}</p>}
         </div>
     );
 }

@@ -1,46 +1,30 @@
-import { useState, useEffect } from "react";
+import { getUser, getToken } from "../utils/auth";
 
-export default function useGetUserVersion(userId) {
-    const [users, setUsers] = useState([]);
+export default async function getUserVersions(docId, whichDocuments) {
+    const user = getUser();
+    const token = getToken();
 
-    useEffect(() => {
-        const token = JSON.parse(localStorage.getItem("token"));
-
-        if (!token || !token.token) {
-            console.error("Няма валиден токен в localStorage");
-            setUsers([]);
-            return;
-        }
-
-        async function getUsersVersions() {
-            try {
-                const response = await fetch(
-                    `/api/v1/users/${userId}/versions`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))?.token || ""}`,
-                            "Content-Type": "application/json",
-                        },
-                    },
-                );
-
-                if (!response.ok) {
-                    const text = await response.text();
-                    console.error(`Request failed ${response.status}:`, text);
-                    setUsers([]);
-                    return;
-                }
-
-                const data = await response.json();
-                setUsers(Array.isArray(data) ? data : []);
-                return data;
-            } catch (error) {
-                console.error("Грешка при зареждане:", error);
-                setUsers([]);
+    try {
+        const res = await fetch(`/api/v1/documents/${docId}/history`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
             }
-        }
-        getUsersVersions();
-    }, []);
+        });
 
-    return users;
+        if (!res.ok) throw new Error("Failed to fetch history");
+
+        const data = await res.json();
+        const versions = data.versions || [];
+
+        const allVersionArray = whichDocuments === "all" ? [...versions] : [];
+        const userVersionArray = versions.filter(
+            (v) => v.createdByUsername === user?.username
+        );
+
+        return { userVersionArray, allVersionArray };
+    } catch (error) {
+        console.error("Error in getUserVersions:", error);
+        return { userVersionArray: [], allVersionArray: [] };
+    }
 }

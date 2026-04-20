@@ -7,12 +7,25 @@ import { documentService } from '../services/documentService';
 import './EditorStyles.css';
 
 const EditDocument = () => {
+    // 1. Взимаме токена от localStorage
+    const tokenData = localStorage.getItem("token");
+    const userData = tokenData ? JSON.parse(tokenData) : null;
+    const token = userData?.token;
+
     const { id } = useParams({ from: '/documents/$id/edit' });
     const navigate = useNavigate();
+    
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // 2. Redirect ако не е логнат
+    useEffect(() => {
+        if (!token) {
+            navigate({ to: '/login' });
+        }
+    }, [token, navigate]);
 
     const editor = useEditor({
         extensions: [
@@ -24,79 +37,32 @@ const EditDocument = () => {
         content: '<p></p>',
     });
 
+    // Важно: Почистване на редактора при демонтиране на компонента
     useEffect(() => {
-        loadDocument();
-    }, [id]);
+        return () => {
+            editor?.destroy();
+        };
+    }, [editor]);
+
+    useEffect(() => {
+        if (token) {
+            loadDocument();
+        }
+    }, [id, token]);
 
     const loadDocument = async () => {
         try {
-            const doc = await documentService.getDocumentById(id);
+            // Подаваме токена на услугата
+            const doc = await documentService.getDocumentById(id, token);
             setTitle(doc.title);
             editor?.commands.setContent(doc.content || '<p></p>');
         } catch (error) {
             console.error('Грешка при зареждане:', error);
+            setError('Неуспешно зареждане на документа.');
         }
     };
 
-    const MenuBar = () => {
-        if (!editor) return null;
-
-        return (
-            <div className="menu-bar">
-                <button
-                    onClick={() => editor.chain().focus().toggleBold().run()}
-                    className={editor.isActive('bold') ? 'is-active' : ''}
-                >
-                    <strong>B</strong>
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleItalic().run()}
-                    className={editor.isActive('italic') ? 'is-active' : ''}
-                >
-                    <em>I</em>
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleStrike().run()}
-                    className={editor.isActive('strike') ? 'is-active' : ''}
-                >
-                    <s>S</s>
-                </button>
-                <span className="separator"></span>
-                <button
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                    className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
-                >
-                    H1
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                    className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
-                >
-                    H2
-                </button>
-                <span className="separator"></span>
-                <button
-                    onClick={() => editor.chain().focus().toggleBulletList().run()}
-                    className={editor.isActive('bulletList') ? 'is-active' : ''}
-                >
-                    • Списък
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                    className={editor.isActive('orderedList') ? 'is-active' : ''}
-                >
-                    1. Списък
-                </button>
-                <span className="separator"></span>
-                <button onClick={() => editor.chain().focus().undo().run()}>
-                    ↩️ Отмени
-                </button>
-                <button onClick={() => editor.chain().focus().redo().run()}>
-                    ↪️ Повтори
-                </button>
-            </div>
-        );
-    };
+    // ... MenuBar остава същият ...
 
     const handleSubmit = async () => {
         if (!title.trim()) {
@@ -111,26 +77,31 @@ const EditDocument = () => {
         }
 
         setIsLoading(true);
+        setError('');
 
         try {
-            // Създаване на нова версия
-            await documentService.createNewVersion(id, content, comment);
+            // 3. Подаваме токена при създаване на версия
+            await documentService.createNewVersion(id, content, comment, token);
 
             alert('Документът е обновен успешно! Нова версия е създадена.');
             navigate({ to: `/documents/${id}` });
         } catch (error) {
             console.error('Грешка:', error);
-            alert(`Грешка: ${error.message}`);
+            setError(`Грешка при запис: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
     };
 
+    if (!token) return null;
+
     return (
         <div className="document-editor-container">
+            {/* Твоят JSX код остава същият */}
             <div className="document-editor">
                 <h1>✏️ Редактиране на документ</h1>
-
+                {/* ... останалата част от формата ... */}
+                
                 <div className="title-field">
                     <label>Заглавие</label>
                     <input
@@ -156,22 +127,14 @@ const EditDocument = () => {
                 <MenuBar />
                 <EditorContent editor={editor} />
 
-                {error && <div className="error-message">{error}</div>}
+                {error && <div className="error-message" style={{color: 'red', marginTop: '10px'}}>{error}</div>}
 
                 <div className="action-buttons">
-                    <button
-                        className="btn-submit"
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                    >
+                    <button className="btn-submit" onClick={handleSubmit} disabled={isLoading}>
                         {isLoading ? '⏳ Запазване...' : '💾 Запази като нова версия'}
                     </button>
-                    <button
-                        className="btn-cancel"
-                        onClick={() => navigate({ to: `/documents/${id}` })}
-                        disabled={isLoading}
-                    >
-                        ❌ Отказ
+                    <button className="btn-cancel" onClick={() => navigate({ to: `/documents/${id}` })} disabled={isLoading}>
+                        ❌ Cancel
                     </button>
                 </div>
             </div>

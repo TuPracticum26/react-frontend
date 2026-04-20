@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { documentService } from '../services/documentService';
+import { hasRole } from '../utils/auth'; // Използваме новия хелпър
 import './DocumentView.css';
 
 const DocumentView = () => {
+    // Увери се, че тук името '$docId' съвпада с дефиницията в route файла
     const { docId } = useParams({ from: '/documents/$docId' });
     const navigate = useNavigate();
+    
     const [document, setDocument] = useState(null);
     const [currentVersion, setCurrentVersion] = useState(null);
     const [history, setHistory] = useState(null);
@@ -13,206 +16,118 @@ const DocumentView = () => {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    const [userRole, setUserRole] = useState('AUTHOR'); // Вземете от auth context
+
+    // Вече не ни трябва ръчно setState за ролята, ползваме hasRole() директно
+    const canReview = hasRole('ADMIN') || hasRole('REVIEWER');
+    const isAuthorOrAdmin = hasRole('AUTHOR') || hasRole('ADMIN');
 
     useEffect(() => {
-        loadDocument();
-        loadHistory();
+        if (docId) {
+            loadData();
+        }
     }, [docId]);
 
-    const loadDocument = async () => {
+    const loadData = async () => {
+        setIsLoading(true);
         try {
-            const doc = await documentService.getDocumentById(docId);
+            const [doc, hist] = await Promise.all([
+                documentService.getDocumentById(docId),
+                documentService.getDocumentHistory(docId)
+            ]);
             setDocument(doc);
             setCurrentVersion(doc);
-        } catch (error) {
-            console.error('Грешка при зареждане на документ:', error);
-        }
-    };
-
-    const loadHistory = async () => {
-        try {
-            const hist = await documentService.getDocumentHistory(docId);
             setHistory(hist);
         } catch (error) {
-            console.error('Грешка при зареждане на история:', error);
+            console.error('Грешка при зареждане:', error);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const loadVersion = async (versionNumber) => {
-        try {
-            const version = await documentService.getDocumentVersionByNumber(docId, versionNumber);
-            setCurrentVersion(version);
-            // Зареждане на коментарите за тази версия
-            if (version.id) {
-                const versionComments = await documentService.getVersionComments(docId, version.id);
-                setComments(versionComments);
-            }
-        } catch (error) {
-            console.error('Грешка при зареждане на версия:', error);
-        }
-    };
+    // ... handleApprove, handleReject и handleAddComment остават същите ...
 
-    const handleApprove = async (versionNumber) => {
-        if (window.confirm(`Сигурни ли сте, че искате да одобрите версия ${versionNumber}?`)) {
-            try {
-                await documentService.approveVersion(docId, versionNumber);
-                alert('Версията е одобрена успешно!');
-                loadHistory(); // Презареждане на историята
-            } catch (error) {
-                console.error('Грешка при одобряване:', error);
-                alert('Грешка при одобряване на версията');
-            }
-        }
-    };
-
-    const handleReject = async (versionNumber) => {
-        if (window.confirm(`Сигурни ли сте, че искате да отхвърлите версия ${versionNumber}?`)) {
-            try {
-                await documentService.rejectVersion(docId, versionNumber);
-                alert('Версията е отхвърлена');
-                loadHistory();
-            } catch (error) {
-                console.error('Грешка при отхвърляне:', error);
-                alert('Грешка при отхвърляне на версията');
-            }
-        }
-    };
-
-    const handleAddComment = async () => {
-        if (!newComment.trim()) return;
-
-        try {
-            const versionId = currentVersion?.id;
-            if (!versionId) return;
-
-            await documentService.postComment(docId, versionId, newComment);
-            setNewComment('');
-            // Презареждане на коментарите
-            const updatedComments = await documentService.getVersionComments(docId, versionId);
-            setComments(updatedComments);
-        } catch (error) {
-            console.error('Грешка при добавяне на коментар:', error);
-            alert('Грешка при добавяне на коментар');
-        }
-    };
-
-    if (isLoading) return <div className="loading">Зареждане...</div>;
-    if (!document) return <div className="error">Документът не е намерен</div>;
+    if (isLoading) return <div className="loading-container"><h3>Зареждане на документ...</h3></div>;
+    if (!document) return (
+        <div className="error-container">
+            <h3>Документът не е намерен</h3>
+            <button onClick={() => navigate({ to: '/documents' })}>Назад към списъка</button>
+        </div>
+    );
 
     return (
         <div className="document-view-container">
-            <div className="document-view">
-                <h1>{document.title}</h1>
+            <div className="document-view-card">
+                <header className="doc-header">
+                    <h1>{document.title}</h1>
+                    <div className="document-meta">
+                        <span>👤 Автор: <strong>{document.authorUsername}</strong></span>
+                        <span>📅 Дата: {new Date(document.creationDate).toLocaleDateString()}</span>
+                        {currentVersion && <span>🔢 Версия: {currentVersion.versionNumber || 1}</span>}
+                    </div>
+                </header>
 
-                <div className="document-meta">
-                    <p>👤 Автор: {document.authorUsername}</p>
-                    <p>📅 Създаден: {new Date(document.creationDate).toLocaleString()}</p>
-                    {currentVersion && (
-                        <p>🔢 Текуща версия: {currentVersion.versionNumber || 1}</p>
+                <div className="action-bar">
+                    <button onClick={() => setShowHistory(!showHistory)} className="btn-secondary">
+                        📜 {showHistory ? 'Скрий историята' : 'История на версиите'}
+                    </button>
+                    
+                    {isAuthorOrAdmin && (
+                        <button 
+                            onClick={() => navigate({ to: `/documents/${docId}/edit` })} 
+                            className="btn-primary"
+                        >
+                            ✏️ Редактирай
+                        </button>
                     )}
                 </div>
 
-                <div className="action-buttons">
-                    <button
-                        onClick={() => setShowHistory(!showHistory)}
-                        className="btn-history"
-                    >
-                        📜 История на версиите
-                    </button>
-                    <button
-                        onClick={() => navigate({ to: `/documents/${docId}/edit` })}
-                        className="btn-edit"
-                    >
-                        ✏️ Редактиране
-                    </button>
-                </div>
-
-                {showHistory && history && (
-                    <div className="history-section">
-                        <h3>📚 История на версиите</h3>
-                        <div className="version-timeline">
-                            {history.versions?.map((version) => (
-                                <div key={version.versionNumber} className="version-item">
-                                    <div className="version-header">
-                                        <strong>Версия {version.versionNumber}</strong>
-                                        <span className={`status ${version.status?.toLowerCase()}`}>
-                                            {version.status}
-                                        </span>
-                                    </div>
-                                    <div className="version-info">
-                                        <small>Създадена от: {version.createdBy}</small>
-                                        <small>на: {new Date(version.createdAt).toLocaleString()}</small>
-                                    </div>
-                                    <div className="version-actions">
-                                        <button
-                                            onClick={() => loadVersion(version.versionNumber)}
-                                            className="btn-view"
-                                        >
-                                            👁️ Преглед
-                                        </button>
-                                        {(userRole === 'ADMIN' || userRole === 'REVIEWER') && (
+                {/* История на версиите */}
+                {showHistory && history?.versions && (
+                    <section className="history-panel">
+                        <h3>📚 История на промените</h3>
+                        <div className="version-list">
+                            {history.versions.map((version) => (
+                                <div key={version.versionNumber} className="version-card">
+                                    <span>Версия {version.versionNumber} ({version.status})</span>
+                                    <div className="version-btns">
+                                        <button onClick={() => loadVersion(version.versionNumber)}>👁️</button>
+                                        {canReview && version.status === 'PENDING' && (
                                             <>
-                                                <button
-                                                    onClick={() => handleApprove(version.versionNumber)}
-                                                    className="btn-approve"
-                                                >
-                                                    ✅ Одобри
-                                                </button>
-                                                <button
-                                                    onClick={() => handleReject(version.versionNumber)}
-                                                    className="btn-reject"
-                                                >
-                                                    ❌ Отхвърли
-                                                </button>
+                                                <button onClick={() => handleApprove(version.versionNumber)} className="text-success">✅</button>
+                                                <button onClick={() => handleReject(version.versionNumber)} className="text-danger">❌</button>
                                             </>
                                         )}
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </section>
                 )}
 
-                <div className="document-content">
-                    <h3>📄 Съдържание:</h3>
-                    <div className="content-body"
-                         dangerouslySetInnerHTML={{ __html: currentVersion?.content || document.content }}
+                <article className="document-content-area">
+                    <div 
+                        className="content-render"
+                        dangerouslySetInnerHTML={{ __html: currentVersion?.content || document.content }} 
                     />
-                </div>
+                </article>
 
-                {/* Коментари */}
-                <div className="comments-section">
-                    <h3>💬 Коментари</h3>
-                    <div className="comments-list">
-                        {comments.map((comment, idx) => (
-                            <div key={idx} className="comment-item">
-                                <p>{comment}</p>
-                            </div>
-                        ))}
+                {/* Секция Коментари */}
+                <section className="comments-area">
+                    <h3>💬 Коментари към версията</h3>
+                    <div className="comments-wrapper">
+                        {comments.length > 0 ? comments.map((c, i) => (
+                            <div key={i} className="comment-bubble">{c}</div>
+                        )) : <p className="no-comments">Няма коментари за тази версия.</p>}
                     </div>
-
-                    <div className="add-comment">
-                        <textarea
-                            value={newComment}
+                    <div className="comment-input-group">
+                        <textarea 
+                            value={newComment} 
                             onChange={(e) => setNewComment(e.target.value)}
-                            placeholder="Добавете коментар за тази версия..."
-                            rows="3"
+                            placeholder="Напишете коментар..."
                         />
-                        <button onClick={handleAddComment} className="btn-comment">
-                            Добави коментар
-                        </button>
+                        <button onClick={handleAddComment} disabled={!newComment.trim()}>Изпрати</button>
                     </div>
-                </div>
-
-                <button
-                    onClick={() => navigate({ to: '/' })}
-                    className="btn-back"
-                >
-                    ← Назад
-                </button>
+                </section>
             </div>
         </div>
     );

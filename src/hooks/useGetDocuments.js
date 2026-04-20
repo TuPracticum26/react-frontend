@@ -1,41 +1,51 @@
 import { useState, useEffect } from "react";
+import { getToken } from "../utils/auth";
 
 export default function useGetDocuments() {
     const [documents, setDocuments] = useState([]);
-    useEffect(() => {
-        const token = JSON.parse(localStorage.getItem("token"));
+    const [loading, setLoading] = useState(true);
 
-        if (!token || !token.token) {
-            console.error("Няма валиден токен в localStorage");
+    useEffect(() => {
+        const token = getToken();
+
+        if (!token) {
             setDocuments([]);
+            setLoading(false);
             return;
         }
 
         async function getDocuments() {
             try {
+                setLoading(true);
                 const response = await fetch("/api/v1/documents", {
                     headers: {
-                        Authorization: `Bearer ${token.token}`,
+                        Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
                     },
                 });
 
-                if (!response.ok) {
-                    const text = await response.text();
-                    console.error(`Request failed ${response.status}:`, text);
-                    setDocuments([]);
-                    return;
-                }
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
 
                 const data = await response.json();
-                setDocuments(Array.isArray(data) ? data : []);
+                
+                // Проверка за формат на данните (масив или Spring Boot Page)
+                if (Array.isArray(data)) {
+                    setDocuments(data);
+                } else if (data?.content && Array.isArray(data.content)) {
+                    setDocuments(data.content);
+                } else {
+                    setDocuments([]);
+                }
             } catch (error) {
-                console.error("Грешка при зареждане:", error);
+                console.error("Fetch error:", error);
                 setDocuments([]);
+            } finally {
+                setLoading(false);
             }
         }
+
         getDocuments();
     }, []);
 
-    return documents;
+    return { documents, loading };
 }
