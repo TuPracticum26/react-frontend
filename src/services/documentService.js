@@ -1,17 +1,15 @@
-const API_URL = "http://localhost:8080/api/documents";
+import { getToken } from "../utils/auth";
+
+const API_URL = "http://localhost:8080/api/v1/documents";
 
 export const documentService = {
-    // Вземане на всички документи
-    getAllDocuments: async (token) => {
-        const response = await fetch(API_URL, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!response.ok) throw new Error("Failed to fetch documents");
-        return response.json();
-    },
+    createDocument: async (documentData) => {
+        const token = getToken(); // Вземаме токена автоматично
 
-    // СЪЗДАВАНЕ НА НОВ ДОКУМЕНТ
-    createDocument: async (documentData, token) => {
+        if (!token) {
+            throw new Error("Сесията е изтекла. Моля, влезте отново.");
+        }
+
         const response = await fetch(API_URL, {
             method: "POST",
             headers: {
@@ -22,9 +20,14 @@ export const documentService = {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
+            // Ако получим 403, хвърляме специфична грешка
+            if (response.status === 403) {
+                throw new Error("Нямате права за създаване на документи (403 Forbidden)");
+            }
+            const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || "Грешка при запис в базата");
         }
+
         return response.json();
     }
 };
