@@ -2,17 +2,19 @@ import DocumentsStyles from "./Documents.module.css";
 import useGetDocuments from "../hooks/useGetDocuments";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { getUser, getToken } from "../utils/auth"; 
+import { Spinner } from "@radix-ui/themes";
 
 export default function Documents() {
     const navigate = useNavigate();
+    
+    // 1. Вземаме данните безопасно
+    const user = getUser();
+    const token = getToken();
 
-    // 1. Извличаме токена (същата логика като в Sidebar/Header)
-    const tokenData = localStorage.getItem("token");
-    const userData = tokenData ? JSON.parse(tokenData) : null;
-    const token = userData?.token;
-
-    // 2. Подаваме токена на хука (увери се, че хукът useGetDocuments го приема)
-    const documents = useGetDocuments(token);
+    // 2. Вземаме документите и състоянието на зареждане от хука
+    // Увери се, че useGetDocuments връща { documents, loading }
+    const { documents, loading } = useGetDocuments();
 
     // 3. Защита: Ако няма токен, пренасочваме към логин
     useEffect(() => {
@@ -21,17 +23,30 @@ export default function Documents() {
         }
     }, [token, navigate]);
 
-    // Ако все още нямаме токен, не рендираме нищо, докато трае пренасочването
+    // Докато трае проверката или пренасочването
     if (!token) return null;
 
-    // Проверка за правилно зареден масив
-    if (!Array.isArray(documents)) {
+    // 4. Важно: Докато данните се зареждат от API-то, показваме Spinner
+    if (loading) {
+        return (
+            <div className={DocumentsStyles.documents} style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+                <Spinner size="3" />
+            </div>
+        );
+    }
+
+    // Ако няма документи
+    if (!documents || documents.length === 0) {
         return (
             <div className={DocumentsStyles.documents}>
                 <h1>All Documents</h1>
-                <div className={DocumentsStyles.error}>
-                    Грешка при зареждане на документите или липса на права.
-                </div>
+                <p>Няма налични документи.</p>
+                {/* Бутонът за създаване пак трябва да е тук, ако има права */}
+                {(user?.roles?.includes("ADMIN") || user?.roles?.includes("AUTHOR")) && (
+                    <Link to="/createDocument">
+                        <button className={DocumentsStyles["create-btn"]}>Create Document</button>
+                    </Link>
+                )}
             </div>
         );
     }
@@ -63,14 +78,14 @@ export default function Documents() {
                 ))}
             </div>
             
-            {/* Бутон за създаване, често скрит за READER роля */}
-            {userData?.user?.roles?.includes("ADMIN") || userData?.user?.roles?.includes("AUTHOR") ? (
+            {/* Логика за правата на потребителя */}
+            {(user?.roles?.includes("ADMIN") || user?.roles?.includes("AUTHOR")) && (
                 <Link to="/createDocument">
                     <button className={DocumentsStyles["create-btn"]}>
                         Create Document
                     </button>
                 </Link>
-            ) : null}
+            )}
         </div>
     );
 }

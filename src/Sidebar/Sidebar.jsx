@@ -2,16 +2,24 @@ import SidebarStyles from "./Sidebar.module.css";
 import {
     Landmark,
     BookOpenText,
+    FileStack,
     SquarePen,
     ClipboardClock,
     BadgeCheck,
-    FileStack,
     Users,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { getUser } from "../utils/auth";
+import { ssrDynamicImportKey } from "vite/module-runner";
 
 export default function Sidebar() {
-    const token = JSON.parse(localStorage.getItem("token")).user ?? {id: 0, username: "", roles: ["none"]};
+    // 1. Използваме сигурната функция. Ако няма потребител, тя връща null.
+    const user = getUser();
+
+    // 2. Дефинираме ролите безопасно. 
+    // Ако user е null, приемаме празен масив, за да не гърми .includes()
+    const userRoles = user?.roles || [];
+
     return (
         <aside>
             <div className={SidebarStyles["sidebar"]}>
@@ -40,7 +48,9 @@ export default function Sidebar() {
                             </h2>
                         </div>
                     </Link>
-                    {!token.roles.includes("READER") ? (
+
+                    {/* 3. Проверка чрез новата променлива userRoles */}
+                    {!userRoles.includes("READER") ? (
                         <>
                             <Link
                                 to="/versions"
@@ -51,7 +61,7 @@ export default function Sidebar() {
                                         <FileStack
                                             className={SidebarStyles.icon}
                                         />{" "}
-                                        &nbsp; Your versions
+                                        &nbsp; Your Versions
                                     </h2>
                                 </div>
                             </Link>

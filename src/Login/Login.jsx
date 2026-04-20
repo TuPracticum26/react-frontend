@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import axios from "axios";
+import { login } from "../utils/auth"; 
 
 export default function Login() {
+    const router = useRouter();
     const [form, setForm] = useState({
         username: "",
         password: "",
@@ -12,11 +14,19 @@ export default function Login() {
         e.preventDefault();
         try {
             const res = await axios.post("/api/v1/auth/login", form);
-            localStorage.setItem("token", JSON.stringify(res.data));
-            window.location.replace("/dashboard");
+            
+            // 1. Използваме функцията от auth.js, за да запишем под правилното име "auth"
+            login(res.data);
+
+            // 2. Инвалидираме рутера, за да "засече" новия токен в __root.jsx
+            await router.invalidate();
+
+            // 3. Пренасочваме към началната страница (където вече ще видиш dashboard-а)
+            window.location.href = "/"; 
+            
         } catch (error) {
             console.error(error.response?.data || error.message);
-            alert("Login failed!");
+            alert("Login failed! Please check your credentials.");
         }
     };
 
@@ -27,6 +37,7 @@ export default function Login() {
         borderRadius: "8px",
         border: "1px solid #ccc",
         outline: "none",
+        boxSizing: "border-box",
     };
 
     const buttonStyle = {
@@ -38,6 +49,7 @@ export default function Login() {
         color: "white",
         fontWeight: "bold",
         cursor: "pointer",
+        transition: "background 0.2s",
     };
 
     return (
@@ -48,19 +60,19 @@ export default function Login() {
                 alignItems: "center",
                 background: "linear-gradient(135deg, #667eea, #764ba3)",
                 width: "100%",
-                height: "100%",
+                height: "100vh",
             }}
         >
             <div
                 style={{
                     background: "white",
-                    padding: "2rem",
+                    padding: "2.5rem",
                     borderRadius: "16px",
-                    width: "350px",
+                    width: "380px",
                     boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
                 }}
             >
-                <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+                <h2 style={{ textAlign: "center", marginBottom: "1.5rem", color: "#333" }}>
                     Welcome Back 👋
                 </h2>
 
@@ -68,7 +80,9 @@ export default function Login() {
                     <input
                         type="text"
                         placeholder="Username"
+                        required
                         style={inputStyle}
+                        value={form.username}
                         onChange={(e) =>
                             setForm({ ...form, username: e.target.value })
                         }
@@ -77,22 +91,26 @@ export default function Login() {
                     <input
                         type="password"
                         placeholder="Password"
+                        required
                         style={inputStyle}
+                        value={form.password}
                         onChange={(e) =>
                             setForm({ ...form, password: e.target.value })
                         }
                     />
 
-                    <button style={buttonStyle}>Login</button>
+                    <button type="submit" style={buttonStyle}>
+                        Login
+                    </button>
 
-                    <p style={{ fontStyle: "14px", color: "#555", marginTop: "1rem"}}>
+                    <p style={{ fontSize: "14px", color: "#555", marginTop: "1.5rem", textAlign: "center" }}>
                         You don't have an account yet?{" "}
                         <Link
                             to="/register"
                             style={{
                                 color: "#4f64dc",
                                 textDecoration: "none",
-                                fontweight: "bold",
+                                fontWeight: "bold",
                             }}
                         >
                             Register here.
