@@ -4,7 +4,7 @@ export default function useGetUsers() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        const token = JSON.parse(localStorage.getItem("token"));
+        const token = JSON.parse(localStorage.getItem("auth"));
 
         if (!token || !token.token) {
             console.error("Няма валиден токен в localStorage");

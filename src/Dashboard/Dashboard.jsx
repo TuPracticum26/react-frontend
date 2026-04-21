@@ -85,7 +85,7 @@ export default function Dashboard() {
     
     const recentAllVersions = [...allDocumentsVersions]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 9);
+        .slice(0, 5);
 
     if (docsLoading || isLoadingData) {
         return (

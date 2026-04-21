@@ -1,11 +1,13 @@
 import { getUser, getToken } from "../utils/auth";
 
-export default async function getUserVersions(docId, whichDocuments) {
+export default async function getUserVersions(whichDocuments) {
     const user = getUser();
     const token = getToken();
+    console.log("HELLO")
+    console.log(user);
 
     try {
-        const res = await fetch(`/api/v1/documents/${docId}/history`, {
+        const res = await fetch(`/api/v1/users/${user.id}/versions`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}` 
@@ -15,14 +17,8 @@ export default async function getUserVersions(docId, whichDocuments) {
         if (!res.ok) throw new Error("Failed to fetch history");
 
         const data = await res.json();
-        const versions = data.versions || [];
-
-        const allVersionArray = whichDocuments === "all" ? [...versions] : [];
-        const userVersionArray = versions.filter(
-            (v) => v.createdByUsername === user?.username
-        );
-
-        return { userVersionArray, allVersionArray };
+        console.log(data);
+        return data;
     } catch (error) {
         console.error("Error in getUserVersions:", error);
         return { userVersionArray: [], allVersionArray: [] };

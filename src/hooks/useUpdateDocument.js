@@ -10,7 +10,7 @@ export default function useUpdateDocument() {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))?.token || ""}`,
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("auth"))?.token || ""}`,
                 },
                 body: JSON.stringify(updates),
             });

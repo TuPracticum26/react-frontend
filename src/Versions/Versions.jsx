@@ -18,14 +18,17 @@ export default function Versions({
     // Зареждане на данните при монтиране
     useEffect(() => {
         const loadData = async () => {
-            if (!docId) return;
             setIsLoading(true);
-            const { userVersionArray } = await getUserVersions(docId, "all");
+            const userVersionArray = await getUserVersions("all");
             setAllUserVersions(userVersionArray);
             setIsLoading(false);
         };
         loadData();
-    }, [docId]);
+    }, []);
+
+    useEffect(() => {
+            console.log(allUserVersions)
+    }, [allUserVersions])
 
     // Логика за филтриране
     let displayedVersions = allUserVersions;

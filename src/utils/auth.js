@@ -3,9 +3,7 @@ export const getAuth = () => {
     try {
 
         const raw = localStorage.getItem("auth");
-
         return raw ? JSON.parse(raw) : null;
-
     } catch {
 
         return null;
