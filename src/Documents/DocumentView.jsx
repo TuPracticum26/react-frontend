@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { documentService } from '../services/documentService';
-import { 
-    Calendar, User, History, ChevronLeft, CheckCircle2, Clock, X 
-} from 'lucide-react';
+import { Calendar, User, History, ChevronLeft, CheckCircle2, Clock } from 'lucide-react';
 import DocumentComments from './DocumentComments';
 import './DocumentView.css';
 
@@ -14,7 +12,6 @@ const DocumentView = () => {
     const [document, setDocument] = useState(null);
     const [currentVersion, setCurrentVersion] = useState(null);
     const [history, setHistory] = useState([]);
-    const [comments, setComments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showHistory, setShowHistory] = useState(false);
 
@@ -32,17 +29,11 @@ const DocumentView = () => {
             setDocument(docData);
             setHistory(sorted);
 
-            // Ако в URL няма номер, взимаме най-новата (първата в сортирания списък)
             const targetVersionNum = urlVersionNumber || (sorted.length > 0 ? sorted[0].versionNumber : null);
 
             if (targetVersionNum) {
                 const fullVersion = await documentService.getDocumentVersion(docId, targetVersionNum);
                 setCurrentVersion(fullVersion);
-                setComments(fullVersion.comments || []);
-            } else {
-                // Фолбек, ако изобщо няма версии
-                setCurrentVersion(docData);
-                setComments([]);
             }
         } catch (err) {
             console.error("Грешка:", err);
@@ -51,23 +42,24 @@ const DocumentView = () => {
         }
     }, [docId, urlVersionNumber]);
 
-    useEffect(() => {
-        loadData();
-    }, [loadData]);
+    useEffect(() => { loadData(); }, [loadData]);
 
     const displayData = useMemo(() => {
+        if (!document) return null;
         const active = currentVersion || document;
         return {
-            title: document?.title || "Зареждане...",
-            content: active?.content || "",
-            status: active?.status || 'DRAFT',
-            author: active?.authorUsername || active?.createdByUsername || "Неизвестен",
-            date: active?.createdAt || active?.creationDate,
-            versionNum: active?.versionNumber || 1
+            title: document.title,
+            content: active.content || "",
+            status: active.status || 'DRAFT',
+            author: active.createdByUsername || active.authorUsername || "Неизвестен",
+            date: active.createdAt || active.creationDate,
+            versionNum: active.versionNumber || 1,
+            dbId: active.id 
         };
     }, [currentVersion, document]);
 
     if (isLoading && !document) return <div className="loader">Зареждане...</div>;
+    if (!displayData) return <div>Документът липсва.</div>;
 
     return (
         <div className="view-page-container">
@@ -76,7 +68,7 @@ const DocumentView = () => {
                     <ChevronLeft size={18} /> Назад
                 </button>
                 <button onClick={() => setShowHistory(!showHistory)} className="btn-secondary">
-                    <History size={18} /> История
+                    <History size={18} /> {showHistory ? "Скрий история" : "История"}
                 </button>
             </div>
 
@@ -92,8 +84,8 @@ const DocumentView = () => {
                         </div>
                         <h1>{displayData.title}</h1>
                         <div className="view-meta">
-                            <div className="meta-item"><User size={16} /> Автор: <strong>{displayData.author}</strong></div>
-                            <div className="meta-item"><Calendar size={16} /> Дата: {new Date(displayData.date).toLocaleDateString('bg-BG')}</div>
+                            <div className="meta-item"><User size={16} /> <strong>{displayData.author}</strong></div>
+                            <div className="meta-item"><Calendar size={16} /> {new Date(displayData.date).toLocaleDateString('bg-BG')}</div>
                         </div>
                     </header>
 
@@ -103,67 +95,33 @@ const DocumentView = () => {
 
                     {currentVersion && (
                         <DocumentComments 
-                            key={currentVersion.id} 
+                            key={displayData.versionNum} 
                             docId={docId}
-                            versionDbId={currentVersion.versionNumber} // Тук ТРЯБВА да е .id (напр. 101), а не .versionNumber
-                            initialComments={comments}
-                            versionNumber={currentVersion.versionNumber} 
+                            versionDbId={displayData.versionNum} // Използваме номера за по-добра съвместимост с контролера
+                            initialComments={currentVersion.comments || []}
+                            versionNumber={displayData.versionNum}
                         />
                     )}
                 </div>
-            </div>
-
-            <div className="view-main-card">
-                <header className="view-header">
-                    <div className="status-row">
-                        <span className={`status-tag ${activeStatus.toLowerCase()}`}>
-                            {activeStatus === 'APPROVED' ? <CheckCircle2 size={14} /> : <Clock size={14} />}
-                            {activeStatus}
-                        </span>
-                        <span className="version-tag">Версия {currentVersion?.versionNumber || 1}</span>
-                    </div>
-
-                    <h1>{document.title}</h1>
 
                 {showHistory && (
                     <aside className="history-sidebar-inline">
+                        <h3>История</h3>
                         <div className="history-list">
                             {history.map(v => (
                                 <div 
                                     key={v.id} 
-                                    className={`history-item-card ${String(v.versionNumber) === String(displayData.versionNum) ? 'active' : ''}`}
+                                    className={`history-item-card ${Number(v.versionNumber) === Number(displayData.versionNum) ? 'active' : ''}`}
                                     onClick={() => navigate({ to: `/documents/${docId}/versions/${v.versionNumber}` })}
                                 >
-                                    <div className="item-top">
-                                        <span>Версия {v.versionNumber}</span>
-                                        <span className="v-status">{v.status}</span>
-                                    </div>
-                                    <div className="item-meta">{new Date(v.createdAt).toLocaleDateString()}</div>
+                                    <strong>Версия {v.versionNumber}</strong>
+                                    <small>{new Date(v.createdAt).toLocaleDateString()}</small>
                                 </div>
                             ))}
                         </div>
                     </aside>
                 )}
             </div>
-
-            {showHistory && (
-                <div className="history-overlay" onClick={() => setShowHistory(false)}>
-                    <div className="history-panel" onClick={e => e.stopPropagation()}>
-                        <h3>Версии</h3>
-                        {history.map(v => (
-                            <div 
-                                key={v.versionNumber} 
-                                className={`history-item ${v.versionNumber === currentVersion?.versionNumber ? 'active' : ''}`}
-                                onClick={() => handleVersionSelect(v.versionNumber)}
-                            >
-                                <strong>Версия {v.versionNumber}</strong>
-                                <p>{v.authorUsername}</p>
-                                <small>{new Date(v.createdAt).toLocaleDateString()}</small>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
