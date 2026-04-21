@@ -36,7 +36,7 @@ const DocumentComments = ({ docId, versionDbId, initialComments = [], versionNum
         <div className="comments-section">
             <div className="comments-header">
                 <MessageSquare size={20} />
-                <h3>Коментари ({comments.length}) за Версия {versionNumber}</h3>
+                <h3>Comments ({comments.length}) on Version {versionNumber}</h3>
             </div>
 
             {error && <div className="comment-error"><AlertCircle size={16} /> {error}</div>}
@@ -47,7 +47,7 @@ const DocumentComments = ({ docId, versionDbId, initialComments = [], versionNum
                     const text = typeof c === 'object' ? (c.comment || c.text) : c;
                     return (
                         <div key={idx} className="comment-card">
-                            <span className="comment-author">{c.authorUsername || "Потребител"}</span>
+                            
                             <p className="comment-text">{text}</p>
                         </div>
                     );
@@ -58,7 +58,7 @@ const DocumentComments = ({ docId, versionDbId, initialComments = [], versionNum
                 <textarea 
                     value={newComment} 
                     onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Напишете коментар..."
+                    placeholder="Write your comment here..."
                     disabled={isSubmitting}
                 />
                 <button type="submit" disabled={isSubmitting || !newComment.trim()}>
