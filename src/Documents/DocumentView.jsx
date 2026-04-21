@@ -1,26 +1,22 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { documentService } from '../services/documentService';
-import { hasRole } from '../utils/auth';
 import { 
-    Calendar, User, History, Edit3, 
-    MessageSquare, Send, ChevronLeft, CheckCircle2, Clock 
+    Calendar, User, History, ChevronLeft, CheckCircle2, Clock, X 
 } from 'lucide-react';
+import DocumentComments from './DocumentComments';
 import './DocumentView.css';
 
 const DocumentView = () => {
-    const { docId } = useParams({ from: '/documents/$docId' });
+    const { docId, versionId: urlVersionNumber } = useParams({ strict: false });
     const navigate = useNavigate();
     
     const [document, setDocument] = useState(null);
     const [currentVersion, setCurrentVersion] = useState(null);
     const [history, setHistory] = useState([]);
-    const [showHistory, setShowHistory] = useState(false);
     const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-
-    const isAuthorOrAdmin = hasRole('AUTHOR') || hasRole('ADMIN');
+    const [showHistory, setShowHistory] = useState(false);
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
@@ -31,43 +27,47 @@ const DocumentView = () => {
             ]);
 
             const versions = histData.versions || [];
-            // Сортираме, за да сме сигурни, че най-новата е първа
-            const sortedVersions = [...versions].sort((a, b) => b.versionNumber - a.versionNumber);
+            const sorted = [...versions].sort((a, b) => b.versionNumber - a.versionNumber);
             
             setDocument(docData);
-            setHistory(sortedVersions);
-            
-            // ФИКС ЗА АВТОРА: Взимаме обекта на последната версия
-            const latest = sortedVersions.length > 0 ? sortedVersions[0] : docData;
-            setCurrentVersion(latest);
-            setComments(latest.comments || []);
-        } catch (error) {
-            console.error('Грешка:', error);
+            setHistory(sorted);
+
+            // Ако в URL няма номер, взимаме най-новата (първата в сортирания списък)
+            const targetVersionNum = urlVersionNumber || (sorted.length > 0 ? sorted[0].versionNumber : null);
+
+            if (targetVersionNum) {
+                const fullVersion = await documentService.getDocumentVersion(docId, targetVersionNum);
+                setCurrentVersion(fullVersion);
+                setComments(fullVersion.comments || []);
+            } else {
+                // Фолбек, ако изобщо няма версии
+                setCurrentVersion(docData);
+                setComments([]);
+            }
+        } catch (err) {
+            console.error("Грешка:", err);
         } finally {
             setIsLoading(false);
         }
-    }, [docId]);
+    }, [docId, urlVersionNumber]);
 
-    useEffect(() => { if (docId) loadData(); }, [loadData]);
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
 
-    const handleVersionSelect = async (vNum) => {
-        try {
-            const versionData = await documentService.getDocumentVersion(docId, vNum);
-            setCurrentVersion(versionData);
-            setComments(versionData.comments || []);
-            setShowHistory(false);
-        } catch (error) {
-            alert('Грешка при превключване');
-        }
-    };
+    const displayData = useMemo(() => {
+        const active = currentVersion || document;
+        return {
+            title: document?.title || "Зареждане...",
+            content: active?.content || "",
+            status: active?.status || 'DRAFT',
+            author: active?.authorUsername || active?.createdByUsername || "Неизвестен",
+            date: active?.createdAt || active?.creationDate,
+            versionNum: active?.versionNumber || 1
+        };
+    }, [currentVersion, document]);
 
-    if (isLoading) return <div className="loader">Зареждане...</div>;
-
-    // КРИТИЧНА ЛОГИКА ЗА МЕТАДАННИТЕ:
-    // Използваме 'currentVersion' (от таблицата с версии), а не 'document' (от основната таблица)
-    const activeStatus = currentVersion?.status || 'DRAFT';
-    const versionAuthor = currentVersion?.authorUsername || currentVersion?.createdByUsername || "Неизвестен";
-    const versionDate = currentVersion?.createdAt || document?.creationDate;
+    if (isLoading && !document) return <div className="loader">Зареждане...</div>;
 
     return (
         <div className="view-page-container">
@@ -75,14 +75,40 @@ const DocumentView = () => {
                 <button className="btn-back" onClick={() => navigate({ to: '/dashboard' })}>
                     <ChevronLeft size={18} /> Назад
                 </button>
-                <div className="btn-group">
-                    <button onClick={() => setShowHistory(!showHistory)} className="btn-secondary">
-                        <History size={18} /> История
-                    </button>
-                    {isAuthorOrAdmin && (
-                        <button onClick={() => navigate({ to: `/documents/${docId}/edit` })} className="btn-primary">
-                            <Edit3 size={18} /> Редактирай
-                        </button>
+                <button onClick={() => setShowHistory(!showHistory)} className="btn-secondary">
+                    <History size={18} /> История
+                </button>
+            </div>
+
+            <div className="document-layout-wrapper">
+                <div className="view-main-card">
+                    <header className="view-header">
+                        <div className="status-row">
+                            <span className={`status-tag ${displayData.status.toLowerCase()}`}>
+                                {displayData.status === 'APPROVED' ? <CheckCircle2 size={14} /> : <Clock size={14} />}
+                                {displayData.status}
+                            </span>
+                            <span className="version-tag">Версия {displayData.versionNum}</span>
+                        </div>
+                        <h1>{displayData.title}</h1>
+                        <div className="view-meta">
+                            <div className="meta-item"><User size={16} /> Автор: <strong>{displayData.author}</strong></div>
+                            <div className="meta-item"><Calendar size={16} /> Дата: {new Date(displayData.date).toLocaleDateString('bg-BG')}</div>
+                        </div>
+                    </header>
+
+                    <div className="view-content-body">
+                        <div className="tiptap-content" dangerouslySetInnerHTML={{ __html: displayData.content }} />
+                    </div>
+
+                    {currentVersion && (
+                        <DocumentComments 
+                            key={currentVersion.id} 
+                            docId={docId}
+                            versionDbId={currentVersion.versionNumber} // Тук ТРЯБВА да е .id (напр. 101), а не .versionNumber
+                            initialComments={comments}
+                            versionNumber={currentVersion.versionNumber} 
+                        />
                     )}
                 </div>
             </div>
@@ -99,50 +125,25 @@ const DocumentView = () => {
 
                     <h1>{document.title}</h1>
 
-                    <div className="view-meta">
-                        <div className="meta-item">
-                            <User size={16} />
-                            {/* Показваме автора на конкретната промяна/версия */}
-                            <span>Редактирано от: <strong>{versionAuthor}</strong></span>
+                {showHistory && (
+                    <aside className="history-sidebar-inline">
+                        <div className="history-list">
+                            {history.map(v => (
+                                <div 
+                                    key={v.id} 
+                                    className={`history-item-card ${String(v.versionNumber) === String(displayData.versionNum) ? 'active' : ''}`}
+                                    onClick={() => navigate({ to: `/documents/${docId}/versions/${v.versionNumber}` })}
+                                >
+                                    <div className="item-top">
+                                        <span>Версия {v.versionNumber}</span>
+                                        <span className="v-status">{v.status}</span>
+                                    </div>
+                                    <div className="item-meta">{new Date(v.createdAt).toLocaleDateString()}</div>
+                                </div>
+                            ))}
                         </div>
-                        <div className="meta-item">
-                            <Calendar size={16} />
-                            <span>Дата на промяна: {new Date(versionDate).toLocaleDateString('bg-BG')}</span>
-                        </div>
-                    </div>
-                </header>
-
-                <div className="view-content-body">
-                    <div 
-                        className="tiptap-content Tiptap-rendered-content"
-                        dangerouslySetInnerHTML={{ __html: currentVersion?.content || document.content }} 
-                    />
-                </div>
-
-                <section className="view-comments">
-                    <div className="comments-header">
-                        <MessageSquare size={20} />
-                        <h3>Коментари ({comments.length})</h3>
-                    </div>
-                    <div className="comments-scroll">
-                        {comments.map((c, i) => (
-                            <div key={i} className="comment-bubble">
-                                <strong>{c.username}</strong>
-                                <p>{c.text}</p>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="comment-input-area">
-                        <textarea 
-                            value={newComment} 
-                            onChange={(e) => setNewComment(e.target.value)} 
-                            placeholder="Коментар..."
-                        />
-                        <button onClick={() => {/* add comment logic */}}>
-                            <Send size={18} />
-                        </button>
-                    </div>
-                </section>
+                    </aside>
+                )}
             </div>
 
             {showHistory && (

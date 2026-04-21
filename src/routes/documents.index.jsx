@@ -1,4 +1,3 @@
-// routes/documents.index.jsx
 import { createFileRoute } from '@tanstack/react-router'
 import Documents from '../Documents/Documents'
 

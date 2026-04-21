@@ -20,6 +20,7 @@ import { Route as VersionsPendingRouteImport } from './routes/versions/pending'
 import { Route as VersionsDraftsRouteImport } from './routes/versions/drafts'
 import { Route as VersionsApprovedRouteImport } from './routes/versions/approved'
 import { Route as DocumentsDocIdRouteImport } from './routes/documents.$docId'
+import { Route as DocumentsDocIdVersionsVersionIdRouteImport } from './routes/documents.$docId.versions.$versionId'
 
 const RegisterLazyRouteImport = createFileRoute('/register')()
 const ManageUsersLazyRouteImport = createFileRoute('/manageUsers')()
@@ -103,6 +104,12 @@ const DocumentsDocIdRoute = DocumentsDocIdRouteImport.update({
   path: '/$docId',
   getParentRoute: () => DocumentsLazyRoute,
 } as any)
+const DocumentsDocIdVersionsVersionIdRoute =
+  DocumentsDocIdVersionsVersionIdRouteImport.update({
+    id: '/versions/$versionId',
+    path: '/versions/$versionId',
+    getParentRoute: () => DocumentsDocIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
@@ -112,7 +119,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
-  '/documents/$docId': typeof DocumentsDocIdRoute
+  '/documents/$docId': typeof DocumentsDocIdRouteWithChildren
   '/versions/approved': typeof VersionsApprovedRoute
   '/versions/drafts': typeof VersionsDraftsRoute
   '/versions/pending': typeof VersionsPendingRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/versions/team': typeof VersionsTeamRoute
   '/documents/': typeof DocumentsIndexRoute
   '/versions/': typeof VersionsIndexRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
@@ -128,7 +136,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
-  '/documents/$docId': typeof DocumentsDocIdRoute
+  '/documents/$docId': typeof DocumentsDocIdRouteWithChildren
   '/versions/approved': typeof VersionsApprovedRoute
   '/versions/drafts': typeof VersionsDraftsRoute
   '/versions/pending': typeof VersionsPendingRoute
@@ -136,6 +144,7 @@ export interface FileRoutesByTo {
   '/versions/team': typeof VersionsTeamRoute
   '/documents': typeof DocumentsIndexRoute
   '/versions': typeof VersionsIndexRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -146,7 +155,7 @@ export interface FileRoutesById {
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
-  '/documents/$docId': typeof DocumentsDocIdRoute
+  '/documents/$docId': typeof DocumentsDocIdRouteWithChildren
   '/versions/approved': typeof VersionsApprovedRoute
   '/versions/drafts': typeof VersionsDraftsRoute
   '/versions/pending': typeof VersionsPendingRoute
@@ -154,6 +163,7 @@ export interface FileRoutesById {
   '/versions/team': typeof VersionsTeamRoute
   '/documents/': typeof DocumentsIndexRoute
   '/versions/': typeof VersionsIndexRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/versions/team'
     | '/documents/'
     | '/versions/'
+    | '/documents/$docId/versions/$versionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/versions/team'
     | '/documents'
     | '/versions'
+    | '/documents/$docId/versions/$versionId'
   id:
     | '__root__'
     | '/'
@@ -206,6 +218,7 @@ export interface FileRouteTypes {
     | '/versions/team'
     | '/documents/'
     | '/versions/'
+    | '/documents/$docId/versions/$versionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -331,16 +344,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsDocIdRouteImport
       parentRoute: typeof DocumentsLazyRoute
     }
+    '/documents/$docId/versions/$versionId': {
+      id: '/documents/$docId/versions/$versionId'
+      path: '/versions/$versionId'
+      fullPath: '/documents/$docId/versions/$versionId'
+      preLoaderRoute: typeof DocumentsDocIdVersionsVersionIdRouteImport
+      parentRoute: typeof DocumentsDocIdRoute
+    }
   }
 }
 
+interface DocumentsDocIdRouteChildren {
+  DocumentsDocIdVersionsVersionIdRoute: typeof DocumentsDocIdVersionsVersionIdRoute
+}
+
+const DocumentsDocIdRouteChildren: DocumentsDocIdRouteChildren = {
+  DocumentsDocIdVersionsVersionIdRoute: DocumentsDocIdVersionsVersionIdRoute,
+}
+
+const DocumentsDocIdRouteWithChildren = DocumentsDocIdRoute._addFileChildren(
+  DocumentsDocIdRouteChildren,
+)
+
 interface DocumentsLazyRouteChildren {
-  DocumentsDocIdRoute: typeof DocumentsDocIdRoute
+  DocumentsDocIdRoute: typeof DocumentsDocIdRouteWithChildren
   DocumentsIndexRoute: typeof DocumentsIndexRoute
 }
 
 const DocumentsLazyRouteChildren: DocumentsLazyRouteChildren = {
-  DocumentsDocIdRoute: DocumentsDocIdRoute,
+  DocumentsDocIdRoute: DocumentsDocIdRouteWithChildren,
   DocumentsIndexRoute: DocumentsIndexRoute,
 }
 
