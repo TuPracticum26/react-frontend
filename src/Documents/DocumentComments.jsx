@@ -1,78 +1,71 @@
 import { useState, useEffect } from 'react';
-import { MessageSquare, Send } from 'lucide-react';
 import { documentService } from '../services/documentService';
+import { Send, MessageSquare, AlertCircle } from 'lucide-react';
 import './DocumentView.css';
 
 const DocumentComments = ({ docId, versionDbId, initialComments = [], versionNumber }) => {
+    const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
-    const [isSending, setIsSending] = useState(false);
-    const [localComments, setLocalComments] = useState(initialComments || []);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        setLocalComments(initialComments || []);
-    }, [initialComments]);
+        setComments(initialComments);
+        setError(null);
+    }, [initialComments, versionDbId]);
 
-    const handleSend = async () => {
-        if (!newComment.trim() || isSending) return;
-        
-        setIsSending(true);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!newComment.trim()) return;
+
+        setIsSubmitting(true);
+        setError(null);
+
         try {
-            // Пращаме обекта към API-то
-            const response = await documentService.addComment(docId, versionDbId, {
-                comment: newComment // Ключът ТРЯБВА да съвпада с името на полето в Java Entity-то
-            });
-            
-            // Ако всичко е наред, добавяме новия коментар към списъка на екрана
-            // Използваме response (това, което базата ни връща), за да сме сигурни
-            const addedComment = typeof response === 'string' ? response : (response.comment || newComment);
-            
-            setLocalComments(prev => [...prev, addedComment]);
-            setNewComment(''); // Изчистваме полето
+            const result = await documentService.addComment(docId, versionDbId, { comment: newComment.trim() });
+            setComments(prev => [...prev, result]);
+            setNewComment('');
         } catch (err) {
-            alert("Неуспешно записване: " + err.message);
+            setError(err.message);
         } finally {
-            setIsSending(false);
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <section className="view-comments">
+        <div className="comments-section">
             <div className="comments-header">
-                <MessageSquare size={22} />
-                <h3>Коментари ({localComments.length})</h3>
-            </div>
-            
-            <div className="comments-scroll">
-                {localComments.length === 0 ? (
-                    <p className="no-comments">Няма коментари към версия {versionNumber}.</p>
-                ) : (
-                    localComments.map((c, i) => (
-                        <div key={i} className="comment-bubble">
-                            <p className="comment-text">
-                                {/* ТЪЙ КАТО 'c' Е СТРИНГ, ГО ИЗПИСВАМЕ ДИРЕКТНО: */}
-                                {typeof c === 'string' ? c : (c.comment || c.text || "Празен коментар")}
-                            </p>
-                        </div>
-                    ))
-                )}
+                <MessageSquare size={20} />
+                <h3>Коментари ({comments.length}) за Версия {versionNumber}</h3>
             </div>
 
-            <div className="comment-input-area">
+            {error && <div className="comment-error"><AlertCircle size={16} /> {error}</div>}
+
+            <div className="comments-list">
+                {comments.map((c, idx) => {
+                    // Гъвкава логика за текст: ако c е обект, взима .comment, ако е низ - взима него
+                    const text = typeof c === 'object' ? (c.comment || c.text) : c;
+                    return (
+                        <div key={idx} className="comment-card">
+                            <span className="comment-author">{c.authorUsername || "Потребител"}</span>
+                            <p className="comment-text">{text}</p>
+                        </div>
+                    );
+                })}
+            </div>
+
+            <form className="comment-form" onSubmit={handleSubmit}>
                 <textarea 
                     value={newComment} 
-                    onChange={(e) => setNewComment(e.target.value)} 
+                    onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Напишете коментар..."
-                    disabled={isSending}
+                    disabled={isSubmitting}
                 />
-                <button 
-                    className="send-btn"
-                    onClick={handleSend}
-                    disabled={isSending || !newComment.trim()}
-                >
-                    <Send size={20} />
+                <button type="submit" disabled={isSubmitting || !newComment.trim()}>
+                    <Send size={18} />
                 </button>
-            </div>
-        </section>
+            </form>
+        </div>
     );
 };
 

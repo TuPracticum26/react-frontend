@@ -1,18 +1,18 @@
-
-.document-view-container {
-    padding: 20px;
-    background-color: #f8f9fa;
-}
-/* Основен контейнер */
+/* ====================================================
+   1. ОСНОВЕН КОНТЕЙНЕР И КЛЕЙОТ
+   ==================================================== */
 .view-page-container {
     padding: 30px 20px;
     background-color: #f8fafc;
-
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .view-actions-bar {
+    width: 100%;
     max-width: 1000px;
     margin: 0 auto 20px auto;
     display: flex;
@@ -20,9 +20,12 @@
     align-items: center;
 }
 
-.btn-group { display: flex; gap: 10px; }
+.btn-group { 
+    display: flex; 
+    gap: 10px; 
+}
 
-/* Buttons */
+/* Бутони */
 .btn-primary, .btn-secondary, .btn-back {
     padding: 10px 18px;
     border-radius: 8px;
@@ -31,40 +34,76 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s;
     font-size: 14px;
 }
 
-.btn-primary { background: #2563eb; color: white; border: none; }
-.btn-secondary { background: white; border: 1px solid #cbd5e1; color: #475569; }
-.btn-secondary.active { border-color: #2563eb; color: #2563eb; background: #eff6ff; }
-.btn-back { background: white; border: 1px solid #cbd5e1; color: #475569; }
+.btn-primary { 
+    background: #2563eb; 
+    color: white; 
+    border: none; 
+}
 
-/* Обвивка на документа */
+.btn-secondary { 
+    background: white; 
+    border: 1px solid #cbd5e1; 
+    color: #475569; 
+}
+
+.btn-secondary:hover {
+    background: #f1f5f9;
+}
+
+.btn-secondary.active { 
+    border-color: #2563eb; 
+    color: #2563eb; 
+    background: #eff6ff; 
+}
+
+.btn-back { 
+    background: transparent; 
+    border: none; 
+    color: #64748b; 
+}
+
+.btn-back:hover {
+    color: #0f172a;
+}
+
+/* ====================================================
+   2. КАРТА НА ДОКУМЕНТА
+   ==================================================== */
 .document-layout-wrapper {
+    width: 100%;
     max-width: 1000px;
     margin: 0 auto;
     position: relative;
     background: white;
     border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    display: flex;
 }
 
 .view-main-card {
-    width: 100%;
+    flex: 1;
     background: white;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Статус и Версия */
+/* Хедър на документа */
+.view-header { 
+    padding: 40px; 
+    border-bottom: 1px solid #f1f5f9; 
+}
+
 .status-row {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
 }
-.status-tag.approved { background: #dcfce7; color: #166534; }
-.status-tag.draft { background: #f1f5f9; color: #475569; }
 
 .status-tag {
     display: inline-flex;
@@ -72,7 +111,7 @@
     gap: 6px;
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
 }
@@ -80,68 +119,251 @@
 .status-tag.draft { background-color: #f1f5f9; color: #475569; }
 .status-tag.approved { background-color: #dcfce7; color: #15803d; }
 .status-tag.pending { background-color: #fef9c3; color: #854d0e; }
-.status-tag.rejected{ background-color: #f8d5d5; color: #a91616; }
+.status-tag.rejected { background-color: #fee2e2; color: #b91c1c; }
 
-.version-tag { font-size: 15px; color: #64748b; font-weight: 500; }
+.version-tag { 
+    font-size: 14px; 
+    color: #64748b; 
+    font-weight: 500; 
+}
 
-.view-header { padding: 40px; border-bottom: 1px solid #f1f5f9; }
-.view-header h1 { font-size: 2.2rem; color: #0f172a; margin: 15px 0; }
-.view-meta { display: flex; gap: 24px; color: #64748b; }
-.meta-item { display: flex; align-items: center; gap: 8px; }
+.view-header h1 { 
+    font-size: 2rem; 
+    color: #0f172a; 
+    margin: 15px 0; 
+    line-height: 1.2;
+}
 
-.view-content-body { padding: 40px; min-height: 300px; line-height: 1.6; }
+.view-meta { 
+    display: flex; 
+    gap: 24px; 
+    color: #64748b; 
+    font-size: 14px;
+}
 
-/* Секция Коментари */
-.view-comments {
+.meta-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+/* Тяло на документа */
+.view-content-body { 
+    padding: 40px; 
+    min-height: 300px; 
+    line-height: 1.7; 
+    color: #334155;
+    font-size: 16px;
+}
+
+.tiptap-content img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+/* ====================================================
+   3. СЕКЦИЯ КОМЕНТАРИ (MODERN BUBBLES)
+   ==================================================== */
+.comments-section {
     background: #f8fafc;
     padding: 32px 40px;
     border-top: 1px solid #e2e8f0;
 }
 
-.comments-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-.comment-bubble {
+.comments-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    margin-bottom: 24px; 
+}
+
+.comments-header h3 {
+    font-size: 18px;
+    color: #1e293b;
+    margin: 0;
+}
+
+.version-indicator {
+    font-size: 12px;
+    color: #64748b;
+    background: #e2e8f0;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.comment-card {
     background: white;
     padding: 16px 20px;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
-    margin-bottom: 16px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
 }
-.comment-bubble strong { display: block; color: #2563eb; margin-bottom: 4px; font-size: 14px; }
 
-.version-header {
+.comment-card:hover {
+    transform: translateY(-2px);
+}
+
+.comment-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.comment-author {
+    font-weight: 700;
+    color: #2563eb;
+    font-size: 14px;
+}
+
+.comment-date {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.comment-text {
+    margin: 0;
+    color: #334155;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+/* Форма за коментар */
+.comment-form {
     display: flex;
     gap: 12px;
-    margin-top: 24px;
     background: white;
-    padding: 8px;
-    border-radius: 12px;
+    padding: 8px 8px 8px 16px;
+    border-radius: 14px;
     border: 1px solid #cbd5e1;
+    align-items: center;
 }
-.comment-input-area textarea { flex: 1; border: none; padding: 10px; resize: none; height: 50px; outline: none; }
-.send-btn { background: #2563eb; color: white; border: none; width: 48px; height: 48px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-/* История (Sidebar Overlay) */
+.comment-form:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.comment-form textarea { 
+    flex: 1; 
+    border: none; 
+    padding: 8px 0; 
+    resize: none; 
+    height: 40px; 
+    outline: none; 
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.btn-send { 
+    background: #2563eb; 
+    color: white; 
+    border: none; 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: background 0.2s;
+}
+
+.btn-send:hover:not(:disabled) { background: #1d4ed8; }
+.btn-send:disabled { background: #e2e8f0; cursor: not-allowed; }
+
+/* ====================================================
+   4. ИСТОРИЯ (SIDEBAR)
+   ==================================================== */
 .history-sidebar-inline {
-    position: absolute;
-    top: 0; right: 0; bottom: 0;
-    width: 350px;
-    background: white;
+    width: 320px;
+    background: #ffffff;
     border-left: 1px solid #e2e8f0;
-    z-index: 10;
     display: flex;
     flex-direction: column;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.05);
     animation: slideIn 0.3s ease-out;
 }
 
-@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes slideIn { 
+    from { transform: translateX(100%); opacity: 0; } 
+    to { transform: translateX(0); opacity: 1; } 
+}
 
-.history-sidebar-header { padding: 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
-.close-sidebar { background: none; border: none; cursor: pointer; color: #64748b; }
+.history-sidebar-inline h3 {
+    padding: 24px;
+    margin: 0;
+    font-size: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+}
 
-.history-list { flex: 1; overflow-y: auto; padding: 16px; }
-.history-item-card { padding: 15px; border-radius: 10px; border: 1px solid #f1f5f9; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
-.history-item-card.active { border-color: #2563eb; background: #eff6ff; }
-.v-num { font-weight: 700; display: block; }
-.v-status { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 800; }
+.history-list { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 16px; 
+}
+
+.history-item-card { 
+    padding: 16px; 
+    border-radius: 10px; 
+    border: 1px solid #f1f5f9; 
+    margin-bottom: 12px; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+}
+
+.history-item-card:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.history-item-card.active { 
+    border-color: #2563eb; 
+    background: #eff6ff; 
+}
+
+.item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.item-top strong {
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.v-status-mini {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.v-status-mini.approved { background: #dcfce7; color: #166534; }
+.v-status-mini.draft { background: #f1f5f9; color: #475569; }
+
+.item-meta {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Лоудър */
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-weight: 600;
+    color: #2563eb;
+}
