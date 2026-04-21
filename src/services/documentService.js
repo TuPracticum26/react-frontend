@@ -35,7 +35,7 @@ export const documentService = {
                 throw new Error("Нямате права за създаване на документи (403 Forbidden)");
             }
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Грешка при запис в базата");
+            throw new Error(errorData.message || "Грешка при запис");
         }
         return response.json();
     }, // Тук липсваше затварящата скоба

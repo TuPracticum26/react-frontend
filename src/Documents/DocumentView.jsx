@@ -111,6 +111,19 @@ const DocumentView = () => {
                         />
                     )}
                 </div>
+            </div>
+
+            <div className="view-main-card">
+                <header className="view-header">
+                    <div className="status-row">
+                        <span className={`status-tag ${activeStatus.toLowerCase()}`}>
+                            {activeStatus === 'APPROVED' ? <CheckCircle2 size={14} /> : <Clock size={14} />}
+                            {activeStatus}
+                        </span>
+                        <span className="version-tag">Версия {currentVersion?.versionNumber || 1}</span>
+                    </div>
+
+                    <h1>{document.title}</h1>
 
                 {showHistory && (
                     <aside className="history-sidebar-inline">
@@ -132,6 +145,25 @@ const DocumentView = () => {
                     </aside>
                 )}
             </div>
+
+            {showHistory && (
+                <div className="history-overlay" onClick={() => setShowHistory(false)}>
+                    <div className="history-panel" onClick={e => e.stopPropagation()}>
+                        <h3>Версии</h3>
+                        {history.map(v => (
+                            <div 
+                                key={v.versionNumber} 
+                                className={`history-item ${v.versionNumber === currentVersion?.versionNumber ? 'active' : ''}`}
+                                onClick={() => handleVersionSelect(v.versionNumber)}
+                            >
+                                <strong>Версия {v.versionNumber}</strong>
+                                <p>{v.authorUsername}</p>
+                                <small>{new Date(v.createdAt).toLocaleDateString()}</small>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

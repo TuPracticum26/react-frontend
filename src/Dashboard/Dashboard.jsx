@@ -16,13 +16,12 @@ import { getUser, getToken } from "../utils/auth";
 
 export default function Dashboard() {
     const user = getUser();
-    const { documents, loading: docsLoading } = useGetDocuments(); // Приемаме, че хукът връща и loading
+    const { documents, loading: docsLoading } = useGetDocuments(); 
     
     const [userDocumentsVersions, setUserDocumentsVersions] = useState([]);
     const [allDocumentsVersions, setAllDocumentsVersions] = useState([]);
     const [isLoadingData, setIsLoadingData] = useState(false);
 
-    // Безопасно сортиране
     const recentUserVersions = [...userDocumentsVersions]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 3);
@@ -30,11 +29,10 @@ export default function Dashboard() {
     const latestChange = recentUserVersions[0];
 
     useEffect(() => {
-        // Стартираме само ако имаме документи и не зареждаме в момента
         if (documents && documents.length > 0 && user && !isLoadingData) {
             getUserData();
         }
-    }, [documents]); // Махаме 'user' от депенденситата, за да не цикли
+    }, [documents]); 
 
     async function getUserData() {
         const tokenString = getToken();
@@ -57,12 +55,18 @@ export default function Dashboard() {
             const userVers = [];
 
             histories.forEach(data => {
-                if (data && (Array.isArray(data) || data.versions)) {
-                    const versionsList = Array.isArray(data) ? data : data.versions;
-                    versionsList.forEach(v => {
-                        allVers.push(v);
+                // data тук е обект от тип DocumentHistoryDTO (съдържа documentTitle и versions)
+                if (data && data.versions) {
+                    data.versions.forEach(v => {
+                        // КЛЮЧОВО: Добавяме заглавието на документа към обекта на версията
+                        const enhancedVersion = {
+                            ...v,
+                            documentTitle: data.documentTitle // Вземаме го от DTO-то
+                        };
+
+                        allVers.push(enhancedVersion);
                         if (v.createdByUsername === user.username || v.authorUsername === user.username) {
-                            userVers.push(v);
+                            userVers.push(enhancedVersion);
                         }
                     });
                 }
@@ -77,11 +81,11 @@ export default function Dashboard() {
         }
     }
 
-    // Помощна функция за броене
     const getCount = (status) => userDocumentsVersions.filter(v => v.status === status).length;
+    
     const recentAllVersions = [...allDocumentsVersions]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 9);
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 9);
 
     if (docsLoading || isLoadingData) {
         return (
@@ -127,7 +131,7 @@ export default function Dashboard() {
                 <HeroCard 
                     title="Latest Change" 
                     number={latestChange?.createdAt ? new Date(latestChange.createdAt).toLocaleDateString() : "N/A"}
-                    content={latestChange?.content ? latestChange.content.replace(/<[^>]*>/g, '').substring(0, 35) + "..." : "No recent changes"}
+                    content={latestChange?.documentTitle || "No recent changes"} // Показваме заглавието тук
                 >
                     <div className={DashboardStyles["hero-card-icon"]} style={{ backgroundColor: "#f9f5d7" }}>
                         <ClockArrowUp size="40px" color="#867315" />
@@ -152,7 +156,7 @@ export default function Dashboard() {
                             <Task 
                                 key={v.id} 
                                 version={v} 
-                                showAuthor={true} // Можеш да добавиш проп, за да показваш кой е направил промяната
+                                showAuthor={true} 
                             />
                         ))
                     ) : <p>No team activity recorded.</p>}
@@ -162,7 +166,6 @@ export default function Dashboard() {
     );
 }
 
-// HeroCard остава същия...
 function HeroCard({ children, title, number, content }) {
     return (
         <div className={DashboardStyles[content ? "hero-card-latest-change" : "hero-card"]}>
