@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { documentService } from '../services/documentService';
-import { Calendar, User, History, ChevronLeft, CheckCircle2, Clock } from 'lucide-react';
+import { Calendar, User, History, ChevronLeft, CheckCircle2, Clock, X } from 'lucide-react';
 import DocumentComments from './DocumentComments';
 import './DocumentView.css';
 
@@ -51,24 +51,24 @@ const DocumentView = () => {
             title: document.title,
             content: active.content || "",
             status: active.status || 'DRAFT',
-            author: active.createdByUsername || active.authorUsername || "Неизвестен",
+            author: active.createdByUsername || active.authorUsername || "Unknown",
             date: active.createdAt || active.creationDate,
             versionNum: active.versionNumber || 1,
             dbId: active.id 
         };
     }, [currentVersion, document]);
 
-    if (isLoading && !document) return <div className="loader">Зареждане...</div>;
-    if (!displayData) return <div>Документът липсва.</div>;
+    if (isLoading && !document) return <div className="loader">Loading...</div>;
+    if (!displayData) return <div>Document missing.</div>;
 
     return (
         <div className="view-page-container">
             <div className="view-actions-bar">
                 <button className="btn-back" onClick={() => navigate({ to: '/dashboard' })}>
-                    <ChevronLeft size={18} /> Назад
+                    <ChevronLeft size={18} /> Back
                 </button>
                 <button onClick={() => setShowHistory(!showHistory)} className="btn-secondary">
-                    <History size={18} /> {showHistory ? "Скрий история" : "История"}
+                    <History size={18} /> {showHistory ? "Hide history" : "History"}
                 </button>
             </div>
 
@@ -80,7 +80,7 @@ const DocumentView = () => {
                                 {displayData.status === 'APPROVED' ? <CheckCircle2 size={14} /> : <Clock size={14} />}
                                 {displayData.status}
                             </span>
-                            <span className="version-tag">Версия {displayData.versionNum}</span>
+                            <span className="version-tag">Version {displayData.versionNum}</span>
                         </div>
                         <h1>{displayData.title}</h1>
                         <div className="view-meta">
@@ -106,7 +106,12 @@ const DocumentView = () => {
 
                 {showHistory && (
                     <aside className="history-sidebar-inline">
-                        <h3>История</h3>
+                        <div className="history-sidebar-header">
+                            <h3>Version history</h3>
+                            <button className="close-sidebar" onClick={() => setShowHistory(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
                         <div className="history-list">
                             {history.map(v => (
                                 <div 
@@ -114,8 +119,15 @@ const DocumentView = () => {
                                     className={`history-item-card ${Number(v.versionNumber) === Number(displayData.versionNum) ? 'active' : ''}`}
                                     onClick={() => navigate({ to: `/documents/${docId}/versions/${v.versionNumber}` })}
                                 >
-                                    <strong>Версия {v.versionNumber}</strong>
-                                    <small>{new Date(v.createdAt).toLocaleDateString()}</small>
+                                    <div className="item-top">
+                                        <span className="v-num">Version {v.versionNumber}</span>
+                                        <span className={`v-status-mini ${v.status.toLowerCase()}`}>
+                                            {v.status}
+                                        </span>
+                                    </div>
+                                    <div className="item-bottom">
+                                        <span className="item-date">{new Date(v.createdAt).toLocaleDateString('bg-BG')}</span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
