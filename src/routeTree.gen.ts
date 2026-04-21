@@ -13,11 +13,14 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CreateDocumentRouteImport } from './routes/createDocument'
 import { Route as VersionsIndexRouteImport } from './routes/versions/index'
+import { Route as DocumentsIndexRouteImport } from './routes/documents.index'
 import { Route as VersionsTeamRouteImport } from './routes/versions/team'
 import { Route as VersionsRejectedRouteImport } from './routes/versions/rejected'
 import { Route as VersionsPendingRouteImport } from './routes/versions/pending'
 import { Route as VersionsDraftsRouteImport } from './routes/versions/drafts'
 import { Route as VersionsApprovedRouteImport } from './routes/versions/approved'
+import { Route as DocumentsDocIdRouteImport } from './routes/documents.$docId'
+import { Route as DocumentsDocIdVersionsVersionIdRouteImport } from './routes/documents.$docId.versions.$versionId'
 
 const RegisterLazyRouteImport = createFileRoute('/register')()
 const ManageUsersLazyRouteImport = createFileRoute('/manageUsers')()
@@ -66,6 +69,11 @@ const VersionsIndexRoute = VersionsIndexRouteImport.update({
   path: '/versions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocumentsIndexRoute = DocumentsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocumentsLazyRoute,
+} as any)
 const VersionsTeamRoute = VersionsTeamRouteImport.update({
   id: '/versions/team',
   path: '/versions/team',
@@ -91,52 +99,71 @@ const VersionsApprovedRoute = VersionsApprovedRouteImport.update({
   path: '/versions/approved',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocumentsDocIdRoute = DocumentsDocIdRouteImport.update({
+  id: '/$docId',
+  path: '/$docId',
+  getParentRoute: () => DocumentsLazyRoute,
+} as any)
+const DocumentsDocIdVersionsVersionIdRoute =
+  DocumentsDocIdVersionsVersionIdRouteImport.update({
+    id: '/versions/$versionId',
+    path: '/versions/$versionId',
+    getParentRoute: () => DocumentsDocIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/createDocument': typeof CreateDocumentRoute
   '/dashboard': typeof DashboardLazyRoute
-  '/documents': typeof DocumentsLazyRoute
+  '/documents': typeof DocumentsLazyRouteWithChildren
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/documents/$docId': typeof DocumentsDocIdRouteWithChildren
   '/versions/approved': typeof VersionsApprovedRoute
   '/versions/drafts': typeof VersionsDraftsRoute
   '/versions/pending': typeof VersionsPendingRoute
   '/versions/rejected': typeof VersionsRejectedRoute
   '/versions/team': typeof VersionsTeamRoute
+  '/documents/': typeof DocumentsIndexRoute
   '/versions/': typeof VersionsIndexRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/createDocument': typeof CreateDocumentRoute
   '/dashboard': typeof DashboardLazyRoute
-  '/documents': typeof DocumentsLazyRoute
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/documents/$docId': typeof DocumentsDocIdRouteWithChildren
   '/versions/approved': typeof VersionsApprovedRoute
   '/versions/drafts': typeof VersionsDraftsRoute
   '/versions/pending': typeof VersionsPendingRoute
   '/versions/rejected': typeof VersionsRejectedRoute
   '/versions/team': typeof VersionsTeamRoute
+  '/documents': typeof DocumentsIndexRoute
   '/versions': typeof VersionsIndexRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
   '/createDocument': typeof CreateDocumentRoute
   '/dashboard': typeof DashboardLazyRoute
-  '/documents': typeof DocumentsLazyRoute
+  '/documents': typeof DocumentsLazyRouteWithChildren
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
+  '/documents/$docId': typeof DocumentsDocIdRouteWithChildren
   '/versions/approved': typeof VersionsApprovedRoute
   '/versions/drafts': typeof VersionsDraftsRoute
   '/versions/pending': typeof VersionsPendingRoute
   '/versions/rejected': typeof VersionsRejectedRoute
   '/versions/team': typeof VersionsTeamRoute
+  '/documents/': typeof DocumentsIndexRoute
   '/versions/': typeof VersionsIndexRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -148,27 +175,32 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/documents/$docId'
     | '/versions/approved'
     | '/versions/drafts'
     | '/versions/pending'
     | '/versions/rejected'
     | '/versions/team'
+    | '/documents/'
     | '/versions/'
+    | '/documents/$docId/versions/$versionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/createDocument'
     | '/dashboard'
-    | '/documents'
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/documents/$docId'
     | '/versions/approved'
     | '/versions/drafts'
     | '/versions/pending'
     | '/versions/rejected'
     | '/versions/team'
+    | '/documents'
     | '/versions'
+    | '/documents/$docId/versions/$versionId'
   id:
     | '__root__'
     | '/'
@@ -178,19 +210,22 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/documents/$docId'
     | '/versions/approved'
     | '/versions/drafts'
     | '/versions/pending'
     | '/versions/rejected'
     | '/versions/team'
+    | '/documents/'
     | '/versions/'
+    | '/documents/$docId/versions/$versionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   CreateDocumentRoute: typeof CreateDocumentRoute
   DashboardLazyRoute: typeof DashboardLazyRoute
-  DocumentsLazyRoute: typeof DocumentsLazyRoute
+  DocumentsLazyRoute: typeof DocumentsLazyRouteWithChildren
   LoginLazyRoute: typeof LoginLazyRoute
   ManageUsersLazyRoute: typeof ManageUsersLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
@@ -260,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VersionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/documents/': {
+      id: '/documents/'
+      path: '/'
+      fullPath: '/documents/'
+      preLoaderRoute: typeof DocumentsIndexRouteImport
+      parentRoute: typeof DocumentsLazyRoute
+    }
     '/versions/team': {
       id: '/versions/team'
       path: '/versions/team'
@@ -295,14 +337,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VersionsApprovedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/documents/$docId': {
+      id: '/documents/$docId'
+      path: '/$docId'
+      fullPath: '/documents/$docId'
+      preLoaderRoute: typeof DocumentsDocIdRouteImport
+      parentRoute: typeof DocumentsLazyRoute
+    }
+    '/documents/$docId/versions/$versionId': {
+      id: '/documents/$docId/versions/$versionId'
+      path: '/versions/$versionId'
+      fullPath: '/documents/$docId/versions/$versionId'
+      preLoaderRoute: typeof DocumentsDocIdVersionsVersionIdRouteImport
+      parentRoute: typeof DocumentsDocIdRoute
+    }
   }
 }
+
+interface DocumentsDocIdRouteChildren {
+  DocumentsDocIdVersionsVersionIdRoute: typeof DocumentsDocIdVersionsVersionIdRoute
+}
+
+const DocumentsDocIdRouteChildren: DocumentsDocIdRouteChildren = {
+  DocumentsDocIdVersionsVersionIdRoute: DocumentsDocIdVersionsVersionIdRoute,
+}
+
+const DocumentsDocIdRouteWithChildren = DocumentsDocIdRoute._addFileChildren(
+  DocumentsDocIdRouteChildren,
+)
+
+interface DocumentsLazyRouteChildren {
+  DocumentsDocIdRoute: typeof DocumentsDocIdRouteWithChildren
+  DocumentsIndexRoute: typeof DocumentsIndexRoute
+}
+
+const DocumentsLazyRouteChildren: DocumentsLazyRouteChildren = {
+  DocumentsDocIdRoute: DocumentsDocIdRouteWithChildren,
+  DocumentsIndexRoute: DocumentsIndexRoute,
+}
+
+const DocumentsLazyRouteWithChildren = DocumentsLazyRoute._addFileChildren(
+  DocumentsLazyRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   CreateDocumentRoute: CreateDocumentRoute,
   DashboardLazyRoute: DashboardLazyRoute,
-  DocumentsLazyRoute: DocumentsLazyRoute,
+  DocumentsLazyRoute: DocumentsLazyRouteWithChildren,
   LoginLazyRoute: LoginLazyRoute,
   ManageUsersLazyRoute: ManageUsersLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,

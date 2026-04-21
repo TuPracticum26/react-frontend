@@ -71,3 +71,16 @@
     grid-column: 3;
     justify-self: end;
 }
+
+.create-btn{
+    border: none;
+    text-align: center;
+    padding-inline: 1rem;
+    padding-block: 0.25rem;
+    font-weight: 475;
+    border-radius: 7px;
+    font-size: 0.9rem;
+    color: #fff;
+    background-color: var(--default-button);
+    cursor: pointer;
+}
