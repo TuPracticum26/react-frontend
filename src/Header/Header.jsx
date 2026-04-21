@@ -77,7 +77,6 @@ export default function Header() {
                         </div>
                     )}
                 </div>
-
                 <button className={HeaderStyles["upload-btn"]}>Upload</button>
                 
                 <div className={HeaderStyles["profile-pic"]} onClick={toggleMenu} tabIndex="0">
