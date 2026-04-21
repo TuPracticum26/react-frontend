@@ -1,5 +1,10 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
-import Documents from "../Documents/Documents";
-export const Route = createLazyFileRoute("/documents")({
-    component: Documents,
-});
+// routes/documents.jsx
+import { Outlet, createLazyFileRoute } from '@tanstack/react-router'
+
+export const Route = createLazyFileRoute('/documents')({
+  component: () => (
+    <>
+      <Outlet /> {/* Това позволява на под-маршрутите (index) да се рендерират */}
+    </>
+  ),
+})
