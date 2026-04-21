@@ -1,0 +1,151 @@
+.document-editor-container {
+  padding: 40px 20px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.document-card {
+  width: 100%;
+  max-width: 1000px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+}
+
+.editor-header h1 {
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #1a1a1a;
+  border-bottom: 2px solid #f0f2f5;
+  padding-bottom: 15px;
+}
+
+/* Стилизиране на полето за заглавие */
+.title-field {
+  margin-bottom: 25px;
+}
+
+.title-field label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #444;
+}
+
+.required {
+  color: #dc3545;
+}
+
+.title-field input {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.title-field input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+}
+
+.title-field input.error {
+  border-color: #dc3545;
+}
+
+/* Редактор */
+.editor-wrapper {
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.menu-bar {
+  background-color: #f8f9fa;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid #e0e0e0;
+  flex-wrap: wrap;
+}
+
+.menu-bar button {
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.menu-bar button:hover {
+  background-color: #f1f3f5;
+}
+
+.menu-bar button.is-active {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+.separator {
+  width: 1px;
+  height: 25px;
+  background-color: #ddd;
+  margin: 0 5px;
+}
+
+/* Основното поле за текст */
+.tiptap-content :global(.ProseMirror) {
+  min-height: 500px; /* Увеличена дължина */
+  padding: 30px;
+  outline: none;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.error-message {
+  color: #dc3545;
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+/* Стилизиран бутон за запазване */
+.action-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-submit {
+  padding: 14px 30px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

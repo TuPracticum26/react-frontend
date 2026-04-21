@@ -1,136 +1,104 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from '@tanstack/react-router';
-import { documentService } from '../services/documentService';
-import { hasRole } from '../utils/auth'; // Използваме новия хелпър
-import './DocumentView.css';
+// Добави тези икони към импортите си
+import { Calendar, User, FileText, History, Edit3, MessageSquare, Send } from 'lucide-react';
 
-const DocumentView = () => {
-    // Увери се, че тук името '$docId' съвпада с дефиницията в route файла
-    const { docId } = useParams({ from: '/documents/$docId' });
-    const navigate = useNavigate();
-    
-    const [document, setDocument] = useState(null);
-    const [currentVersion, setCurrentVersion] = useState(null);
-    const [history, setHistory] = useState(null);
-    const [showHistory, setShowHistory] = useState(false);
-    const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Вече не ни трябва ръчно setState за ролята, ползваме hasRole() директно
-    const canReview = hasRole('ADMIN') || hasRole('REVIEWER');
-    const isAuthorOrAdmin = hasRole('AUTHOR') || hasRole('ADMIN');
-
-    useEffect(() => {
-        if (docId) {
-            loadData();
-        }
-    }, [docId]);
-
-    const loadData = async () => {
-        setIsLoading(true);
-        try {
-            const [doc, hist] = await Promise.all([
-                documentService.getDocumentById(docId),
-                documentService.getDocumentHistory(docId)
-            ]);
-            setDocument(doc);
-            setCurrentVersion(doc);
-            setHistory(hist);
-        } catch (error) {
-            console.error('Грешка при зареждане:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // ... handleApprove, handleReject и handleAddComment остават същите ...
-
-    if (isLoading) return <div className="loading-container"><h3>Зареждане на документ...</h3></div>;
-    if (!document) return (
-        <div className="error-container">
-            <h3>Документът не е намерен</h3>
-            <button onClick={() => navigate({ to: '/documents' })}>Назад към списъка</button>
-        </div>
-    );
-
-    return (
-        <div className="document-view-container">
-            <div className="document-view-card">
-                <header className="doc-header">
-                    <h1>{document.title}</h1>
-                    <div className="document-meta">
-                        <span>👤 Автор: <strong>{document.authorUsername}</strong></span>
-                        <span>📅 Дата: {new Date(document.creationDate).toLocaleDateString()}</span>
-                        {currentVersion && <span>🔢 Версия: {currentVersion.versionNumber || 1}</span>}
+// Вътре в рендер логиката:
+return (
+    <div className="document-view-container">
+        <div className="document-view-card">
+            <header className="doc-header">
+                <div className="header-main">
+                    <div className="title-section">
+                        <h1>{document.title}</h1>
+                        <div className="doc-badges">
+                            <span className={`status-badge ${currentVersion?.status?.toLowerCase()}`}>
+                                {currentVersion?.status || 'PUBLISHED'}
+                            </span>
+                            <span className="version-tag">v{currentVersion?.versionNumber || 1}</span>
+                        </div>
                     </div>
-                </header>
-
-                <div className="action-bar">
-                    <button onClick={() => setShowHistory(!showHistory)} className="btn-secondary">
-                        📜 {showHistory ? 'Скрий историята' : 'История на версиите'}
-                    </button>
                     
-                    {isAuthorOrAdmin && (
-                        <button 
-                            onClick={() => navigate({ to: `/documents/${docId}/edit` })} 
-                            className="btn-primary"
-                        >
-                            ✏️ Редактирай
+                    <div className="header-actions">
+                        <button onClick={() => setShowHistory(!showHistory)} className="btn-icon-text secondary">
+                            <History size={18} /> {showHistory ? 'Скрий историята' : 'История'}
                         </button>
-                    )}
+                        {isAuthorOrAdmin && (
+                            <button onClick={() => navigate({ to: `/documents/${docId}/edit` })} className="btn-icon-text primary">
+                                <Edit3 size={18} /> Нова версия
+                            </button>
+                        )}
+                    </div>
                 </div>
 
-                {/* История на версиите */}
-                {showHistory && history?.versions && (
-                    <section className="history-panel">
-                        <h3>📚 История на промените</h3>
-                        <div className="version-list">
-                            {history.versions.map((version) => (
-                                <div key={version.versionNumber} className="version-card">
-                                    <span>Версия {version.versionNumber} ({version.status})</span>
-                                    <div className="version-btns">
-                                        <button onClick={() => loadVersion(version.versionNumber)}>👁️</button>
-                                        {canReview && version.status === 'PENDING' && (
-                                            <>
-                                                <button onClick={() => handleApprove(version.versionNumber)} className="text-success">✅</button>
-                                                <button onClick={() => handleReject(version.versionNumber)} className="text-danger">❌</button>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                <div className="document-meta-bar">
+                    <div className="meta-item">
+                        <User size={16} /> <span>Автор: <strong>{document.authorUsername}</strong></span>
+                    </div>
+                    <div className="meta-item">
+                        <Calendar size={16} /> <span>Създаден на: {new Date(document.creationDate).toLocaleDateString()}</span>
+                    </div>
+                    <div className="meta-item">
+                        <FileText size={16} /> <span>ID: {docId}</span>
+                    </div>
+                </div>
+            </header>
 
-                <article className="document-content-area">
-                    <div 
+            {/* Историята вече е по-компактна като страничен панел или падащо меню */}
+            {showHistory && history?.versions && (
+                <aside className="history-drawer">
+                    <h3>📚 Хронология на промените</h3>
+                    <div className="version-timeline">
+                        {history.versions.map((v) => (
+                            <div key={v.versionNumber} 
+                                 className={`version-step ${currentVersion?.versionNumber === v.versionNumber ? 'active' : ''}`}
+                                 onClick={() => loadVersion(v.versionNumber)}>
+                                <div className="step-number">{v.versionNumber}</div>
+                                <div className="step-content">
+                                    <span className={`mini-status ${v.status.toLowerCase()}`}>{v.status}</span>
+                                    <small>{new Date(v.createdAt).toLocaleDateString()}</small>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </aside>
+            )}
+
+            {/* ЕТО ТУК Е ПРОМЯНАТА: Съдържанието вече е върху бяло "платно" */}
+            <main className="document-paper-wrapper">
+                <article className="document-paper Tiptap-rendered-content">
+                    <div 
                         className="content-render"
-                        dangerouslySetInnerHTML={{ __html: currentVersion?.content || document.content }} 
+                        dangerouslySetInnerHTML={{ __html: currentVersion?.content || document.content }} 
                     />
                 </article>
+            </main>
 
-                {/* Секция Коментари */}
-                <section className="comments-area">
-                    <h3>💬 Коментари към версията</h3>
-                    <div className="comments-wrapper">
-                        {comments.length > 0 ? comments.map((c, i) => (
-                            <div key={i} className="comment-bubble">{c}</div>
-                        )) : <p className="no-comments">Няма коментари за тази версия.</p>}
-                    </div>
-                    <div className="comment-input-group">
-                        <textarea 
-                            value={newComment} 
-                            onChange={(e) => setNewComment(e.target.value)}
-                            placeholder="Напишете коментар..."
-                        />
-                        <button onClick={handleAddComment} disabled={!newComment.trim()}>Изпрати</button>
-                    </div>
-                </section>
-            </div>
+            <section className="comments-layout">
+                <div className="comments-header">
+                    <MessageSquare size={20} /> <h3>Коментари</h3>
+                </div>
+                <div className="comments-scroll-area">
+                    {comments.length > 0 ? comments.map((c, i) => (
+                        <div key={i} className="comment-card">
+                            <div className="comment-user">
+                                <div className="user-avatar">{c.username?.charAt(0) || 'U'}</div>
+                                <strong>{c.username || 'Потребител'}</strong>
+                            </div>
+                            <p className="comment-body">{c.text || c}</p>
+                        </div>
+                    )) : <p className="empty-state">Няма коментари за тази версия.</p>}
+                </div>
+                
+                <div className="comment-box">
+                    <textarea 
+                        value={newComment} 
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Напишете бележка..."
+                    />
+                    <button onClick={handleAddComment} disabled={!newComment.trim()} className="btn-send-comment">
+                        <Send size={18} />
+                    </button>
+                </div>
+            </section>
         </div>
-    );
-};
-
-export default DocumentView;
+    </div>
+);

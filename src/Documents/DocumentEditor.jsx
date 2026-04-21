@@ -5,33 +5,35 @@ import DocumentsStyles from "./Documents.module.css";
 import useGetDocument from "../hooks/useGetDocument";
 import useUpdateDocument from "../hooks/useUpdateDocument";
 
+// Импортираме функциите от твоя auth.js файл
+import { getToken, isAuthenticated } from "../utils/auth"; 
+
 export default function DocumentEditor() {
+    // ВАЖНО: Увери се, че параметърът тук съвпада с дефиницията в маршрута ($documentId или $docId)
     const { documentId } = useParams({ from: "/documents/$documentId" });
     const navigate = useNavigate();
 
-    // 1. Взимаме токена от localStorage по същия начин като в Header/Sidebar
-    const tokenData = localStorage.getItem("token");
-    const userData = tokenData ? JSON.parse(tokenData) : null;
-    const token = userData?.token; // Предполагаме, че структурата е { token: "...", user: {...} }
+    // 1. Използваме готовата функция от auth.js
+    const token = getToken();
 
-    // 2. Подаваме токена на хуковете (увери се, че хуковете ти го приемат)
+    // 2. Подаваме токена на хуковете
     const { document, loading, error } = useGetDocument(documentId, token);
     const { updateDocument, isUpdating } = useUpdateDocument(token);
 
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
 
-    // 3. Ако няма токен или има грешка в аутентикацията, пренасочваме към логин
+    // 3. Защита: Използваме isAuthenticated() за проверка
     useEffect(() => {
-        if (!token) {
+        if (!isAuthenticated()) {
             navigate({ to: "/login" });
         }
-    }, [token, navigate]);
+    }, [navigate]);
 
-    // Зареждане на документа
+    // Зареждане на данните в стейта
     useEffect(() => {
         if (document) {
-            setContent(document.content || "<p>Започнете да пишете...</p>");
+            setContent(document.content || "");
             setTitle(document.title || "Без заглавие");
         }
     }, [document]);
@@ -39,10 +41,10 @@ export default function DocumentEditor() {
     const handleContentChange = (newContent) => {
         setContent(newContent);
 
-        // Автоматично запазване (Debounce логика)
+        // Debounce за автоматично запазване
         if (window.contentTimeout) clearTimeout(window.contentTimeout);
         window.contentTimeout = setTimeout(() => {
-            if (token) {
+            if (isAuthenticated()) {
                 updateDocument(documentId, { content: newContent });
             }
         }, 1500);
@@ -54,7 +56,7 @@ export default function DocumentEditor() {
 
         if (window.titleTimeout) clearTimeout(window.titleTimeout);
         window.titleTimeout = setTimeout(() => {
-            if (token) {
+            if (isAuthenticated()) {
                 updateDocument(documentId, { title: newTitle });
             }
         }, 1000);
@@ -64,8 +66,8 @@ export default function DocumentEditor() {
         navigate({ to: "/documents" });
     };
 
-    // Обработка на състояния
-    if (!token) return null;
+    // Ако не е логнат, не рендерваме нищо докато трае useEffect пренасочването
+    if (!isAuthenticated()) return null;
     
     if (loading) {
         return <div className={DocumentsStyles.loading}>Зареждане на документа...</div>;
