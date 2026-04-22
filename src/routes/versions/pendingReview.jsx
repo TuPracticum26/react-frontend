@@ -1,21 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
-import Versions from "../../Versions/Versions";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import rootStyles from "../root.module.css";
-import { Flex, Skeleton, Text } from "@radix-ui/themes";
-import getVersionsPage from "../../api/getVersionsPage";
+import { createFileRoute } from '@tanstack/react-router'
+import Versions from '../../Versions/Versions'
+import getAllPendingVersionsPage from '../../api/getAllPendingVersionsPage'
+import { useQuery } from '@tanstack/react-query'
+import { Flex, Skeleton, Text } from '@radix-ui/themes'
+import rootStyles from '..//root.module.css'
+import { useState } from 'react'
+export const Route = createFileRoute('/versions/pendingReview')({
+  component: ManagePendingReviewVersions,
+})
 
-export const Route = createFileRoute("/versions/")({
-    component: ManageVersions,
-});
-
-function ManageVersions() {
-    const token = JSON.parse(localStorage.getItem("auth")).user;
+function ManagePendingReviewVersions() {
     const [page, setPage] = useState(0);
     const { isLoading, data } = useQuery({
-        queryKey: ["versions", page],
-        queryFn: () => getVersionsPage(token.id, page),
+        queryKey: ["pending-review-versions", page],
+        queryFn: () => getAllPendingVersionsPage(page),
         staleTime: 10000,
     });
     let arrayOfTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -39,7 +37,7 @@ function ManageVersions() {
 
     return (
         <>
-            <Versions versionsPage={data} page={page} setPage={setPage} />
+            <Versions versionsPage={data} page={page} setPage={setPage} functionality="Review"/>
         </>
     );
 }

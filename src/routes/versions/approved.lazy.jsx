@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import Versions from "../../Versions/Versions";
 
-export const Route = createFileRoute("/versions/approved")({
+export const Route = createLazyFileRoute("/versions/approved")({
     component: ApprovedVersions,
 });
 
