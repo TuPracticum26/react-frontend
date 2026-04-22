@@ -372,3 +372,43 @@
     display: flex;
     gap: 1rem;
 }
+
+.reviewer-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.reviewer-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    min-width: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.reviewer-btn:hover {
+    filter: brightness(0.95);
+}
+
+.reviewer-actions-approve-btn {
+    background: var(--approve-bg-color);
+    color: var(--approve-text-color);
+    border: none;
+}
+
+.reviewer-actions-reject-btn {
+    background: var(--reject-bg-color);
+    color: var(--reject-text-color);
+    border: none;
+}

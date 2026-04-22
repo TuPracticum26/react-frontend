@@ -2,12 +2,15 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { documentService } from '../../services/documentService';
 import { Calendar, User, History, ClipboardPlus ,ChevronLeft, CheckCircle2, Clock, X } from 'lucide-react';
+import { getUser } from '../../utils/auth';
 import DocumentComments from '../DocumentComments/DocumentComments';
 import DocumentViewStyles from './DocumentView.module.css';
 
 const DocumentView = () => {
     const { docId, versionId: urlVersionNumber } = useParams({ strict: false });
     const navigate = useNavigate();
+
+    const user = getUser();
     
     const [document, setDocument] = useState(null);
     const [currentVersion, setCurrentVersion] = useState(null);
@@ -48,7 +51,9 @@ const DocumentView = () => {
         if (!document) return null;
         const active = currentVersion || document;
         return {
-            title: document.title,
+            documentId: document.id,
+            documentTitle: document.title,
+            title: active.title,
             content: active.content || "",
             status: active.status || 'DRAFT',
             author: active.createdByUsername || active.authorUsername || "Unknown",
@@ -86,12 +91,18 @@ const DocumentView = () => {
                                 {displayData.status}
                             </span>
                             <span className={DocumentViewStyles["version-tag"]}>Version {displayData.versionNum}</span>
+                            <span className={DocumentViewStyles["version-tag"]}>{displayData.title}</span>
                         </div>
-                        <h1>{displayData.title}</h1>
+                        <h1>{displayData.documentTitle}</h1>
                         <div className={DocumentViewStyles["view-meta"]}>
                             <div className={DocumentViewStyles["meta-item"]}><User size={16} /> <strong>{displayData.author}</strong></div>
                             <div className={DocumentViewStyles["meta-item"]}><Calendar size={16} /> {new Date(displayData.date).toLocaleDateString('bg-BG')}</div>
                         </div>
+                        {user?.roles?.includes("REVIEWER") && displayData.status === 'PENDING' && (
+                        <div className={DocumentViewStyles["reviewer-actions"]}>
+                            <button onClick={() => {documentService.approveVersion(displayData.documentId, displayData.versionNum); window.location.reload() }} className={`${DocumentViewStyles["reviewer-actions-approve-btn"]} ${DocumentViewStyles["reviewer-btn"]}`}>Approve</button>
+                            <button onClick={() => {documentService.rejectVersion(displayData.documentId, displayData.versionNum); window.location.reload()}} className={`${DocumentViewStyles["reviewer-actions-reject-btn"]} ${DocumentViewStyles["reviewer-btn"]}`}>Reject</button>
+                        </div>)}
                     </header>
 
                     <div className={DocumentViewStyles["view-content-body"]}>
@@ -126,6 +137,7 @@ const DocumentView = () => {
                                 >
                                     <div className={DocumentViewStyles["item-top"]}>
                                         <span className={DocumentViewStyles["v-num"]}>Version {v.versionNumber}</span>
+                                        <span className={DocumentViewStyles["v-num"]}>{v.title}</span>
                                         <span className={`${DocumentViewStyles['v-status-mini']} ${DocumentViewStyles[`${v.status.toLowerCase()}`]}`}>
                                             {v.status}
                                         </span>

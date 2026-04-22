@@ -41,7 +41,6 @@ export const documentService = {
     },
 
     createNewVersion: async (docId, verId, title, content) => {
-        console.log(`Creating new version for docId: ${docId}, verId: ${verId}`);
         const response = await fetch(`${API_URL}/${docId}/versions/${verId}`, {
             method: "POST",
             headers: getHeaders(),
@@ -73,6 +72,32 @@ export const documentService = {
             method: "POST",
             headers: getHeaders(),
             body: JSON.stringify(commentData)
+        });
+
+        if (!response.ok) {
+            if (response.status === 403) throw new Error("403: Нямате права за коментиране.");
+            throw new Error("Грешка при запис на коментара.");
+        }
+        return response.json();
+    },
+
+    approveVersion: async (docId, versionNum) => {
+        const response = await fetch(`${API_URL}/${docId}/versions/${versionNum}/approve`, {
+            method: "POST",
+            headers: getHeaders(),
+        });
+
+        if (!response.ok) {
+            if (response.status === 403) throw new Error("403: Нямате права за коментиране.");
+            throw new Error("Грешка при запис на коментара.");
+        }
+        return response.json();
+    },
+
+    rejectVersion: async (docId, versionNum) => {
+        const response = await fetch(`${API_URL}/${docId}/versions/${versionNum}/reject`, {
+            method: "POST",
+            headers: getHeaders(),
         });
 
         if (!response.ok) {

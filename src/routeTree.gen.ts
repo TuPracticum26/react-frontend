@@ -11,25 +11,28 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as CreateDocumentRouteImport } from './routes/createDocument'
-import { Route as VersionsIndexRouteImport } from './routes/versions/index'
-import { Route as VersionsTeamRouteImport } from './routes/versions/team'
-import { Route as VersionsRejectedRouteImport } from './routes/versions/rejected'
-import { Route as VersionsPendingRouteImport } from './routes/versions/pending'
-import { Route as VersionsDraftsRouteImport } from './routes/versions/drafts'
-import { Route as VersionsApprovedRouteImport } from './routes/versions/approved'
-import { Route as DocumentsDocIdVersionsVersionIdRouteImport } from './routes/documents/$docId/versions.$versionId'
+import { Route as VersionsPendingReviewRouteImport } from './routes/versions/pendingReview'
 
 const RegisterLazyRouteImport = createFileRoute('/register')()
 const ManageUsersLazyRouteImport = createFileRoute('/manageUsers')()
 const LoginLazyRouteImport = createFileRoute('/login')()
 const DashboardLazyRouteImport = createFileRoute('/dashboard')()
+const CreateDocumentLazyRouteImport = createFileRoute('/createDocument')()
 const IndexLazyRouteImport = createFileRoute('/')()
+const VersionsIndexLazyRouteImport = createFileRoute('/versions/')()
 const DocumentsIndexLazyRouteImport = createFileRoute('/documents/')()
+const VersionsTeamLazyRouteImport = createFileRoute('/versions/team')()
+const VersionsRejectedLazyRouteImport = createFileRoute('/versions/rejected')()
+const VersionsPendingLazyRouteImport = createFileRoute('/versions/pending')()
+const VersionsDraftsLazyRouteImport = createFileRoute('/versions/drafts')()
+const VersionsApprovedLazyRouteImport = createFileRoute('/versions/approved')()
 const DocumentsDocIdIndexLazyRouteImport =
   createFileRoute('/documents/$docId/')()
 const DocumentsDocIdEditLazyRouteImport = createFileRoute(
   '/documents/$docId/edit',
+)()
+const DocumentsDocIdVersionsVersionIdLazyRouteImport = createFileRoute(
+  '/documents/$docId/versions/$versionId',
 )()
 
 const RegisterLazyRoute = RegisterLazyRouteImport.update({
@@ -52,16 +55,25 @@ const DashboardLazyRoute = DashboardLazyRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/dashboard.lazy').then((d) => d.Route))
-const CreateDocumentRoute = CreateDocumentRouteImport.update({
+const CreateDocumentLazyRoute = CreateDocumentLazyRouteImport.update({
   id: '/createDocument',
   path: '/createDocument',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/createDocument.lazy').then((d) => d.Route),
+)
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+const VersionsIndexLazyRoute = VersionsIndexLazyRouteImport.update({
+  id: '/versions/',
+  path: '/versions/',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/versions/index.lazy').then((d) => d.Route),
+)
 const DocumentsIndexLazyRoute = DocumentsIndexLazyRouteImport.update({
   id: '/documents/',
   path: '/documents/',
@@ -69,34 +81,42 @@ const DocumentsIndexLazyRoute = DocumentsIndexLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/documents/index.lazy').then((d) => d.Route),
 )
-const VersionsIndexRoute = VersionsIndexRouteImport.update({
-  id: '/versions/',
-  path: '/versions/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VersionsTeamRoute = VersionsTeamRouteImport.update({
+const VersionsTeamLazyRoute = VersionsTeamLazyRouteImport.update({
   id: '/versions/team',
   path: '/versions/team',
   getParentRoute: () => rootRouteImport,
-} as any)
-const VersionsRejectedRoute = VersionsRejectedRouteImport.update({
+} as any).lazy(() => import('./routes/versions/team.lazy').then((d) => d.Route))
+const VersionsRejectedLazyRoute = VersionsRejectedLazyRouteImport.update({
   id: '/versions/rejected',
   path: '/versions/rejected',
   getParentRoute: () => rootRouteImport,
-} as any)
-const VersionsPendingRoute = VersionsPendingRouteImport.update({
+} as any).lazy(() =>
+  import('./routes/versions/rejected.lazy').then((d) => d.Route),
+)
+const VersionsPendingLazyRoute = VersionsPendingLazyRouteImport.update({
   id: '/versions/pending',
   path: '/versions/pending',
   getParentRoute: () => rootRouteImport,
-} as any)
-const VersionsDraftsRoute = VersionsDraftsRouteImport.update({
+} as any).lazy(() =>
+  import('./routes/versions/pending.lazy').then((d) => d.Route),
+)
+const VersionsDraftsLazyRoute = VersionsDraftsLazyRouteImport.update({
   id: '/versions/drafts',
   path: '/versions/drafts',
   getParentRoute: () => rootRouteImport,
-} as any)
-const VersionsApprovedRoute = VersionsApprovedRouteImport.update({
+} as any).lazy(() =>
+  import('./routes/versions/drafts.lazy').then((d) => d.Route),
+)
+const VersionsApprovedLazyRoute = VersionsApprovedLazyRouteImport.update({
   id: '/versions/approved',
   path: '/versions/approved',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/versions/approved.lazy').then((d) => d.Route),
+)
+const VersionsPendingReviewRoute = VersionsPendingReviewRouteImport.update({
+  id: '/versions/pendingReview',
+  path: '/versions/pendingReview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentsDocIdIndexLazyRoute = DocumentsDocIdIndexLazyRouteImport.update({
@@ -113,67 +133,74 @@ const DocumentsDocIdEditLazyRoute = DocumentsDocIdEditLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/documents/$docId/edit.lazy').then((d) => d.Route),
 )
-const DocumentsDocIdVersionsVersionIdRoute =
-  DocumentsDocIdVersionsVersionIdRouteImport.update({
+const DocumentsDocIdVersionsVersionIdLazyRoute =
+  DocumentsDocIdVersionsVersionIdLazyRouteImport.update({
     id: '/documents/$docId/versions/$versionId',
     path: '/documents/$docId/versions/$versionId',
     getParentRoute: () => rootRouteImport,
-  } as any)
+  } as any).lazy(() =>
+    import('./routes/documents/$docId/versions.$versionId.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/createDocument': typeof CreateDocumentRoute
+  '/createDocument': typeof CreateDocumentLazyRoute
   '/dashboard': typeof DashboardLazyRoute
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
-  '/versions/approved': typeof VersionsApprovedRoute
-  '/versions/drafts': typeof VersionsDraftsRoute
-  '/versions/pending': typeof VersionsPendingRoute
-  '/versions/rejected': typeof VersionsRejectedRoute
-  '/versions/team': typeof VersionsTeamRoute
-  '/versions/': typeof VersionsIndexRoute
+  '/versions/pendingReview': typeof VersionsPendingReviewRoute
+  '/versions/approved': typeof VersionsApprovedLazyRoute
+  '/versions/drafts': typeof VersionsDraftsLazyRoute
+  '/versions/pending': typeof VersionsPendingLazyRoute
+  '/versions/rejected': typeof VersionsRejectedLazyRoute
+  '/versions/team': typeof VersionsTeamLazyRoute
   '/documents/': typeof DocumentsIndexLazyRoute
+  '/versions/': typeof VersionsIndexLazyRoute
   '/documents/$docId/edit': typeof DocumentsDocIdEditLazyRoute
   '/documents/$docId/': typeof DocumentsDocIdIndexLazyRoute
-  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/createDocument': typeof CreateDocumentRoute
+  '/createDocument': typeof CreateDocumentLazyRoute
   '/dashboard': typeof DashboardLazyRoute
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
-  '/versions/approved': typeof VersionsApprovedRoute
-  '/versions/drafts': typeof VersionsDraftsRoute
-  '/versions/pending': typeof VersionsPendingRoute
-  '/versions/rejected': typeof VersionsRejectedRoute
-  '/versions/team': typeof VersionsTeamRoute
-  '/versions': typeof VersionsIndexRoute
+  '/versions/pendingReview': typeof VersionsPendingReviewRoute
+  '/versions/approved': typeof VersionsApprovedLazyRoute
+  '/versions/drafts': typeof VersionsDraftsLazyRoute
+  '/versions/pending': typeof VersionsPendingLazyRoute
+  '/versions/rejected': typeof VersionsRejectedLazyRoute
+  '/versions/team': typeof VersionsTeamLazyRoute
   '/documents': typeof DocumentsIndexLazyRoute
+  '/versions': typeof VersionsIndexLazyRoute
   '/documents/$docId/edit': typeof DocumentsDocIdEditLazyRoute
   '/documents/$docId': typeof DocumentsDocIdIndexLazyRoute
-  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
-  '/createDocument': typeof CreateDocumentRoute
+  '/createDocument': typeof CreateDocumentLazyRoute
   '/dashboard': typeof DashboardLazyRoute
   '/login': typeof LoginLazyRoute
   '/manageUsers': typeof ManageUsersLazyRoute
   '/register': typeof RegisterLazyRoute
-  '/versions/approved': typeof VersionsApprovedRoute
-  '/versions/drafts': typeof VersionsDraftsRoute
-  '/versions/pending': typeof VersionsPendingRoute
-  '/versions/rejected': typeof VersionsRejectedRoute
-  '/versions/team': typeof VersionsTeamRoute
-  '/versions/': typeof VersionsIndexRoute
+  '/versions/pendingReview': typeof VersionsPendingReviewRoute
+  '/versions/approved': typeof VersionsApprovedLazyRoute
+  '/versions/drafts': typeof VersionsDraftsLazyRoute
+  '/versions/pending': typeof VersionsPendingLazyRoute
+  '/versions/rejected': typeof VersionsRejectedLazyRoute
+  '/versions/team': typeof VersionsTeamLazyRoute
   '/documents/': typeof DocumentsIndexLazyRoute
+  '/versions/': typeof VersionsIndexLazyRoute
   '/documents/$docId/edit': typeof DocumentsDocIdEditLazyRoute
   '/documents/$docId/': typeof DocumentsDocIdIndexLazyRoute
-  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdRoute
+  '/documents/$docId/versions/$versionId': typeof DocumentsDocIdVersionsVersionIdLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -184,13 +211,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/versions/pendingReview'
     | '/versions/approved'
     | '/versions/drafts'
     | '/versions/pending'
     | '/versions/rejected'
     | '/versions/team'
-    | '/versions/'
     | '/documents/'
+    | '/versions/'
     | '/documents/$docId/edit'
     | '/documents/$docId/'
     | '/documents/$docId/versions/$versionId'
@@ -202,13 +230,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/versions/pendingReview'
     | '/versions/approved'
     | '/versions/drafts'
     | '/versions/pending'
     | '/versions/rejected'
     | '/versions/team'
-    | '/versions'
     | '/documents'
+    | '/versions'
     | '/documents/$docId/edit'
     | '/documents/$docId'
     | '/documents/$docId/versions/$versionId'
@@ -220,13 +249,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/manageUsers'
     | '/register'
+    | '/versions/pendingReview'
     | '/versions/approved'
     | '/versions/drafts'
     | '/versions/pending'
     | '/versions/rejected'
     | '/versions/team'
-    | '/versions/'
     | '/documents/'
+    | '/versions/'
     | '/documents/$docId/edit'
     | '/documents/$docId/'
     | '/documents/$docId/versions/$versionId'
@@ -234,21 +264,22 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  CreateDocumentRoute: typeof CreateDocumentRoute
+  CreateDocumentLazyRoute: typeof CreateDocumentLazyRoute
   DashboardLazyRoute: typeof DashboardLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
   ManageUsersLazyRoute: typeof ManageUsersLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
-  VersionsApprovedRoute: typeof VersionsApprovedRoute
-  VersionsDraftsRoute: typeof VersionsDraftsRoute
-  VersionsPendingRoute: typeof VersionsPendingRoute
-  VersionsRejectedRoute: typeof VersionsRejectedRoute
-  VersionsTeamRoute: typeof VersionsTeamRoute
-  VersionsIndexRoute: typeof VersionsIndexRoute
+  VersionsPendingReviewRoute: typeof VersionsPendingReviewRoute
+  VersionsApprovedLazyRoute: typeof VersionsApprovedLazyRoute
+  VersionsDraftsLazyRoute: typeof VersionsDraftsLazyRoute
+  VersionsPendingLazyRoute: typeof VersionsPendingLazyRoute
+  VersionsRejectedLazyRoute: typeof VersionsRejectedLazyRoute
+  VersionsTeamLazyRoute: typeof VersionsTeamLazyRoute
   DocumentsIndexLazyRoute: typeof DocumentsIndexLazyRoute
+  VersionsIndexLazyRoute: typeof VersionsIndexLazyRoute
   DocumentsDocIdEditLazyRoute: typeof DocumentsDocIdEditLazyRoute
   DocumentsDocIdIndexLazyRoute: typeof DocumentsDocIdIndexLazyRoute
-  DocumentsDocIdVersionsVersionIdRoute: typeof DocumentsDocIdVersionsVersionIdRoute
+  DocumentsDocIdVersionsVersionIdLazyRoute: typeof DocumentsDocIdVersionsVersionIdLazyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -285,7 +316,7 @@ declare module '@tanstack/react-router' {
       id: '/createDocument'
       path: '/createDocument'
       fullPath: '/createDocument'
-      preLoaderRoute: typeof CreateDocumentRouteImport
+      preLoaderRoute: typeof CreateDocumentLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -295,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/versions/': {
+      id: '/versions/'
+      path: '/versions'
+      fullPath: '/versions/'
+      preLoaderRoute: typeof VersionsIndexLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/documents/': {
       id: '/documents/'
       path: '/documents'
@@ -302,46 +340,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsIndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/versions/': {
-      id: '/versions/'
-      path: '/versions'
-      fullPath: '/versions/'
-      preLoaderRoute: typeof VersionsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/versions/team': {
       id: '/versions/team'
       path: '/versions/team'
       fullPath: '/versions/team'
-      preLoaderRoute: typeof VersionsTeamRouteImport
+      preLoaderRoute: typeof VersionsTeamLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/versions/rejected': {
       id: '/versions/rejected'
       path: '/versions/rejected'
       fullPath: '/versions/rejected'
-      preLoaderRoute: typeof VersionsRejectedRouteImport
+      preLoaderRoute: typeof VersionsRejectedLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/versions/pending': {
       id: '/versions/pending'
       path: '/versions/pending'
       fullPath: '/versions/pending'
-      preLoaderRoute: typeof VersionsPendingRouteImport
+      preLoaderRoute: typeof VersionsPendingLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/versions/drafts': {
       id: '/versions/drafts'
       path: '/versions/drafts'
       fullPath: '/versions/drafts'
-      preLoaderRoute: typeof VersionsDraftsRouteImport
+      preLoaderRoute: typeof VersionsDraftsLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/versions/approved': {
       id: '/versions/approved'
       path: '/versions/approved'
       fullPath: '/versions/approved'
-      preLoaderRoute: typeof VersionsApprovedRouteImport
+      preLoaderRoute: typeof VersionsApprovedLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/versions/pendingReview': {
+      id: '/versions/pendingReview'
+      path: '/versions/pendingReview'
+      fullPath: '/versions/pendingReview'
+      preLoaderRoute: typeof VersionsPendingReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/documents/$docId/': {
@@ -362,7 +400,7 @@ declare module '@tanstack/react-router' {
       id: '/documents/$docId/versions/$versionId'
       path: '/documents/$docId/versions/$versionId'
       fullPath: '/documents/$docId/versions/$versionId'
-      preLoaderRoute: typeof DocumentsDocIdVersionsVersionIdRouteImport
+      preLoaderRoute: typeof DocumentsDocIdVersionsVersionIdLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -370,21 +408,23 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  CreateDocumentRoute: CreateDocumentRoute,
+  CreateDocumentLazyRoute: CreateDocumentLazyRoute,
   DashboardLazyRoute: DashboardLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
   ManageUsersLazyRoute: ManageUsersLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,
-  VersionsApprovedRoute: VersionsApprovedRoute,
-  VersionsDraftsRoute: VersionsDraftsRoute,
-  VersionsPendingRoute: VersionsPendingRoute,
-  VersionsRejectedRoute: VersionsRejectedRoute,
-  VersionsTeamRoute: VersionsTeamRoute,
-  VersionsIndexRoute: VersionsIndexRoute,
+  VersionsPendingReviewRoute: VersionsPendingReviewRoute,
+  VersionsApprovedLazyRoute: VersionsApprovedLazyRoute,
+  VersionsDraftsLazyRoute: VersionsDraftsLazyRoute,
+  VersionsPendingLazyRoute: VersionsPendingLazyRoute,
+  VersionsRejectedLazyRoute: VersionsRejectedLazyRoute,
+  VersionsTeamLazyRoute: VersionsTeamLazyRoute,
   DocumentsIndexLazyRoute: DocumentsIndexLazyRoute,
+  VersionsIndexLazyRoute: VersionsIndexLazyRoute,
   DocumentsDocIdEditLazyRoute: DocumentsDocIdEditLazyRoute,
   DocumentsDocIdIndexLazyRoute: DocumentsDocIdIndexLazyRoute,
-  DocumentsDocIdVersionsVersionIdRoute: DocumentsDocIdVersionsVersionIdRoute,
+  DocumentsDocIdVersionsVersionIdLazyRoute:
+    DocumentsDocIdVersionsVersionIdLazyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -10,7 +10,7 @@ export default function Task({ version }) {
     const displayTitle = version.title || "Untitled Document";
 
     return (
-        <Link to={`/documents/${version.documentId}`}>
+        <Link to={`/documents/${version.documentId}/versions/${version.versionNumber}`}>
             <div
                 className={`${TaskStyles["task"]} ${
                     version.status === "APPROVED" 
