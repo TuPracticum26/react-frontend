@@ -367,3 +367,8 @@
     font-weight: 600;
     color: #2563eb;
 }
+
+.version-actions-separator {
+    display: flex;
+    gap: 1rem;
+}

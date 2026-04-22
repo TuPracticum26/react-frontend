@@ -26,10 +26,6 @@ export default function Versions({
         loadData();
     }, []);
 
-    useEffect(() => {
-            console.log(allUserVersions)
-    }, [allUserVersions])
-
     // Логика за филтриране
     let displayedVersions = allUserVersions;
 

@@ -40,6 +40,16 @@ export const documentService = {
         return response.json();
     },
 
+    createNewVersion: async (docId, verId, title, content) => {
+        console.log(`Creating new version for docId: ${docId}, verId: ${verId}`);
+        const response = await fetch(`${API_URL}/${docId}/versions/${verId}`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ title, content })
+        });
+        if (!response.ok) throw new Error("Грешка при създаване на нова версия.");
+    },
+
     // Вземане на историята на версиите
     getDocumentHistory: async (id) => {
         const response = await fetch(`${API_URL}/${id}/history`, { headers: getHeaders() });

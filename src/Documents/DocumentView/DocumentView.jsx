@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { documentService } from '../../services/documentService';
-import { Calendar, User, History, ChevronLeft, CheckCircle2, Clock, X } from 'lucide-react';
+import { Calendar, User, History, ClipboardPlus ,ChevronLeft, CheckCircle2, Clock, X } from 'lucide-react';
 import DocumentComments from '../DocumentComments/DocumentComments';
 import DocumentViewStyles from './DocumentView.module.css';
 
@@ -64,12 +64,17 @@ const DocumentView = () => {
     return (
         <div className={DocumentViewStyles["view-page-container"]}>
             <div className={DocumentViewStyles["view-actions-bar"]}>
-                <button className={DocumentViewStyles["btn-back"]} onClick={() => navigate({ to: '/dashboard' })}>
+                <button className={DocumentViewStyles["btn-back"]} onClick={() => navigate({ to: '/documents' })}>
                     <ChevronLeft size={18} /> Back
+                </button>
+                <div className={DocumentViewStyles["version-actions-separator"]}>
+                <button onClick={() => navigate({ to: `/documents/${docId}/edit` })} className={DocumentViewStyles["btn-secondary"]}>
+                    <ClipboardPlus size={18} /> Create Version
                 </button>
                 <button onClick={() => setShowHistory(!showHistory)} className={DocumentViewStyles["btn-secondary"]}>
                     <History size={18} /> {showHistory ? "Hide history" : "History"}
                 </button>
+                </div>
             </div>
 
             <div className={DocumentViewStyles["document-layout-wrapper"]}>
