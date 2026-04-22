@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { documentService } from '../services/documentService';
+import { documentService } from '../../services/documentService';
 import { Calendar, User, History, ChevronLeft, CheckCircle2, Clock, X } from 'lucide-react';
-import DocumentComments from './DocumentComments';
-import './DocumentView.css';
+import DocumentComments from '../DocumentComments/DocumentComments';
+import DocumentViewStyles from './DocumentView.module.css';
 
 const DocumentView = () => {
     const { docId, versionId: urlVersionNumber } = useParams({ strict: false });
@@ -58,39 +58,39 @@ const DocumentView = () => {
         };
     }, [currentVersion, document]);
 
-    if (isLoading && !document) return <div className="loader">Loading...</div>;
+    if (isLoading && !document) return <div className={DocumentViewStyles["loader"]}>Loading...</div>;
     if (!displayData) return <div>Document missing.</div>;
 
     return (
-        <div className="view-page-container">
-            <div className="view-actions-bar">
-                <button className="btn-back" onClick={() => navigate({ to: '/dashboard' })}>
+        <div className={DocumentViewStyles["view-page-container"]}>
+            <div className={DocumentViewStyles["view-actions-bar"]}>
+                <button className={DocumentViewStyles["btn-back"]} onClick={() => navigate({ to: '/dashboard' })}>
                     <ChevronLeft size={18} /> Back
                 </button>
-                <button onClick={() => setShowHistory(!showHistory)} className="btn-secondary">
+                <button onClick={() => setShowHistory(!showHistory)} className={DocumentViewStyles["btn-secondary"]}>
                     <History size={18} /> {showHistory ? "Hide history" : "History"}
                 </button>
             </div>
 
-            <div className="document-layout-wrapper">
-                <div className="view-main-card">
-                    <header className="view-header">
-                        <div className="status-row">
-                            <span className={`status-tag ${displayData.status.toLowerCase()}`}>
+            <div className={DocumentViewStyles["document-layout-wrapper"]}>
+                <div className={DocumentViewStyles["view-main-card"]}>
+                    <header className={DocumentViewStyles["view-header"]}>
+                        <div className={DocumentViewStyles["status-row"]}>
+                            <span className={`${DocumentViewStyles['status-tag']} ${DocumentViewStyles[`${displayData.status.toLowerCase()}`]}`}>
                                 {displayData.status === 'APPROVED' ? <CheckCircle2 size={14} /> : <Clock size={14} />}
                                 {displayData.status}
                             </span>
-                            <span className="version-tag">Version {displayData.versionNum}</span>
+                            <span className={DocumentViewStyles["version-tag"]}>Version {displayData.versionNum}</span>
                         </div>
                         <h1>{displayData.title}</h1>
-                        <div className="view-meta">
-                            <div className="meta-item"><User size={16} /> <strong>{displayData.author}</strong></div>
-                            <div className="meta-item"><Calendar size={16} /> {new Date(displayData.date).toLocaleDateString('bg-BG')}</div>
+                        <div className={DocumentViewStyles["view-meta"]}>
+                            <div className={DocumentViewStyles["meta-item"]}><User size={16} /> <strong>{displayData.author}</strong></div>
+                            <div className={DocumentViewStyles["meta-item"]}><Calendar size={16} /> {new Date(displayData.date).toLocaleDateString('bg-BG')}</div>
                         </div>
                     </header>
 
-                    <div className="view-content-body">
-                        <div className="tiptap-content" dangerouslySetInnerHTML={{ __html: displayData.content }} />
+                    <div className={DocumentViewStyles["view-content-body"]}>
+                        <div className={DocumentViewStyles["tiptap-content"]}dangerouslySetInnerHTML={{ __html: displayData.content }} />
                     </div>
 
                     {currentVersion && (
@@ -105,28 +105,28 @@ const DocumentView = () => {
                 </div>
 
                 {showHistory && (
-                    <aside className="history-sidebar-inline">
-                        <div className="history-sidebar-header">
+                    <aside className={DocumentViewStyles["history-sidebar-inline"]}>
+                        <div className={DocumentViewStyles["history-sidebar-header"]}>
                             <h3>Version history</h3>
-                            <button className="close-sidebar" onClick={() => setShowHistory(false)}>
+                            <button className={DocumentViewStyles["close-sidebar"]}onClick={() => setShowHistory(false)}>
                                 <X size={20} />
                             </button>
                         </div>
-                        <div className="history-list">
+                        <div className={DocumentViewStyles["history-list"]}>
                             {history.map(v => (
                                 <div 
                                     key={v.id} 
-                                    className={`history-item-card ${Number(v.versionNumber) === Number(displayData.versionNum) ? 'active' : ''}`}
+                                    className={`${DocumentViewStyles['history-item-card']} ${DocumentViewStyles[`${Number(v.versionNumber) === Number(displayData.versionNum) ? 'active' : ''}`]}`}
                                     onClick={() => navigate({ to: `/documents/${docId}/versions/${v.versionNumber}` })}
                                 >
-                                    <div className="item-top">
-                                        <span className="v-num">Version {v.versionNumber}</span>
-                                        <span className={`v-status-mini ${v.status.toLowerCase()}`}>
+                                    <div className={DocumentViewStyles["item-top"]}>
+                                        <span className={DocumentViewStyles["v-num"]}>Version {v.versionNumber}</span>
+                                        <span className={`${DocumentViewStyles['v-status-mini']} ${DocumentViewStyles[`${v.status.toLowerCase()}`]}`}>
                                             {v.status}
                                         </span>
                                     </div>
-                                    <div className="item-bottom">
-                                        <span className="item-date">{new Date(v.createdAt).toLocaleDateString('bg-BG')}</span>
+                                    <div className={DocumentViewStyles["item-bottom"]}>
+                                        <span className={DocumentViewStyles["item-date"]}>{new Date(v.createdAt).toLocaleDateString('bg-BG')}</span>
                                     </div>
                                 </div>
                             ))}

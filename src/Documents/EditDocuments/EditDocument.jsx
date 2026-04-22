@@ -3,8 +3,8 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { documentService } from '../services/documentService';
-import './EditorStyles.css';
+import { documentService } from '../../services/documentService';
+import EditDocumentsStyles from './EditorStyles.css';
 
 const EditDocument = () => {
     // 1. Взимаме токена от localStorage
@@ -96,13 +96,13 @@ const EditDocument = () => {
     if (!token) return null;
 
     return (
-        <div className="document-editor-container">
+        <div className={EditDocumentsStyles["document-editor-container"]}>
             {/* Твоят JSX код остава същият */}
-            <div className="document-editor">
+            <div className={EditDocumentsStyles["document-editor"]}>
                 <h1>✏️ Редактиране на документ</h1>
                 {/* ... останалата част от формата ... */}
                 
-                <div className="title-field">
+                <div className={EditDocumentsStyles["title-field"]}>
                     <label>Заглавие</label>
                     <input
                         type="text"
@@ -113,7 +113,7 @@ const EditDocument = () => {
                     />
                 </div>
 
-                <div className="comment-field">
+                <div className={EditDocumentsStyles["comment-field"]}>
                     <label>Коментар за тази версия (опционално)</label>
                     <textarea
                         value={comment}
@@ -127,13 +127,13 @@ const EditDocument = () => {
                 <MenuBar />
                 <EditorContent editor={editor} />
 
-                {error && <div className="error-message" style={{color: 'red', marginTop: '10px'}}>{error}</div>}
+                {error && <div className={EditDocumentsStyles["error-message"]} style={{color: 'red', marginTop: '10px'}}>{error}</div>}
 
-                <div className="action-buttons">
-                    <button className="btn-submit" onClick={handleSubmit} disabled={isLoading}>
+                <div className={EditDocumentsStyles["action-buttons"]}>
+                    <button className={EditDocumentsStyles["btn-submit"]} onClick={handleSubmit} disabled={isLoading}>
                         {isLoading ? '⏳ Запазване...' : '💾 Запази като нова версия'}
                     </button>
-                    <button className="btn-cancel" onClick={() => navigate({ to: `/documents/${id}` })} disabled={isLoading}>
+                    <button className={EditDocumentsStyles["btn-cancel"]} onClick={() => navigate({ to: `/documents/${id}` })} disabled={isLoading}>
                         ❌ Cancel
                     </button>
                 </div>

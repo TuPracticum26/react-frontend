@@ -1,6 +1,6 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import DocumentsStyles from "./Documents.module.css";
+import DocumentsStyles from "../Documents.module.css";
 
 export default function TiptapEditor({ content, onContentChange }) {
     const editor = useEditor({

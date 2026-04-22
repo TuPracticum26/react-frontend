@@ -2,8 +2,8 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { useState } from 'react';
-import useCreateDocument from '../hooks/useCreateDocument';
-import styles from './EditorStyles.module.css'; 
+import useCreateDocument from '../../hooks/useCreateDocument';
+import EditDocumentsStyles from '../EditDocuments/EditorStyles.module.css'; 
 
 const EDITOR_EXTENSIONS = [
   StarterKit,
@@ -17,64 +17,64 @@ const MenuBar = ({ editor }) => {
   if (!editor) return null;
 
   return (
-    <div className={styles["menu-bar"]}>
+    <div className={EditDocumentsStyles["menu-bar"]}>
       {/* --- ЗАГЛАВИЯ --- */}
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={editor.isActive('heading', { level: 1 }) ? styles['is-active'] : ''}
+        className={editor.isActive('heading', { level: 1 }) ? EditDocumentsStyles['is-active'] : ''}
       >
         H1
       </button>
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={editor.isActive('heading', { level: 2 }) ? styles['is-active'] : ''}
+        className={editor.isActive('heading', { level: 2 }) ? EditDocumentsStyles['is-active'] : ''}
       >
         H2
       </button>
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={editor.isActive('heading', { level: 3 }) ? styles['is-active'] : ''}
+        className={editor.isActive('heading', { level: 3 }) ? EditDocumentsStyles['is-active'] : ''}
       >
         H3
       </button>
 
-      <div className={styles["separator"]}></div>
+      <div className={EditDocumentsStyles["separator"]}></div>
 
       {/* --- ОСНОВНИ СТИЛОВЕ --- */}
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
-        className={editor.isActive('bold') ? styles['is-active'] : ''}
+        className={editor.isActive('bold') ? EditDocumentsStyles['is-active'] : ''}
       ><strong>B</strong></button>
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={editor.isActive('italic') ? styles['is-active'] : ''}
+        className={editor.isActive('italic') ? EditDocumentsStyles['is-active'] : ''}
       ><em>I</em></button>
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleStrike().run()}
-        className={editor.isActive('strike') ? styles['is-active'] : ''}
+        className={editor.isActive('strike') ? EditDocumentsStyles['is-active'] : ''}
       ><s>S</s></button>
 
-      <div className={styles["separator"]}></div>
+      <div className={EditDocumentsStyles["separator"]}></div>
 
       {/* --- СПИСЪЦИ --- */}
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={editor.isActive('bulletList') ? styles['is-active'] : ''}
+        className={editor.isActive('bulletList') ? EditDocumentsStyles['is-active'] : ''}
       >• List</button>
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={editor.isActive('orderedList') ? styles['is-active'] : ''}
+        className={editor.isActive('orderedList') ? EditDocumentsStyles['is-active'] : ''}
       >1. List</button>
 
-      <div className={styles["separator"]}></div>
+      <div className={EditDocumentsStyles["separator"]}></div>
       
       <button type="button" onClick={() => editor.chain().focus().undo().run()}>↶</button>
       <button type="button" onClick={() => editor.chain().focus().redo().run()}>↷</button>
@@ -111,41 +111,41 @@ const CreateDocument = () => {
   };
 
   return (
-    <div className={styles["document-editor-container"]}>
-      <div className={styles["document-card"]}>
-        <header className={styles["editor-header"]}>
+    <div className={EditDocumentsStyles["document-editor-container"]}>
+      <div className={EditDocumentsStyles["document-card"]}>
+        <header className={EditDocumentsStyles["editor-header"]}>
           <h1>📄 Нов документ</h1>
         </header>
         
-        <div className={styles["title-field"]}>
-          <label>Заглавие на документа <span className={styles["required"]}>*</span></label>
+        <div className={EditDocumentsStyles["title-field"]}>
+          <label>Заглавие на документа <span className={EditDocumentsStyles["required"]}>*</span></label>
           <input 
             type="text" 
             value={title} 
             onChange={(e) => setTitle(e.target.value)} 
             placeholder="Въведете заглавие..." 
-            className={validationError && !title ? styles["error"] : ""}
+            className={validationError && !title ? EditDocumentsStyles["error"] : ""}
           />
         </div>
 
-        <div className={styles["editor-wrapper"]}>
+        <div className={EditDocumentsStyles["editor-wrapper"]}>
           <MenuBar editor={editor} />
-          <div className={styles["tiptap-content"]}>
+          <div className={EditDocumentsStyles["tiptap-content"]}>
             <EditorContent editor={editor} />
           </div>
         </div>
 
         {(validationError || apiError) && (
-          <span className={styles["error-message"]}>
+          <span className={EditDocumentsStyles["error-message"]}>
             ⚠️ {validationError || apiError}
           </span>
         )}
 
-        <div className={styles["action-buttons"]}>
+        <div className={EditDocumentsStyles["action-buttons"]}>
           <button 
             onClick={handleSubmit} 
             disabled={isSaving}
-            className={styles["btn-submit"]}
+            className={EditDocumentsStyles["btn-submit"]}
           >
             {isSaving ? 'Запазване...' : '💾 Запази документа'}
           </button>
