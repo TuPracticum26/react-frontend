@@ -2,6 +2,7 @@ import VersionsStyles from "./Versions.module.css";
 import Task from "../Task/Task";
 import { useState, useEffect, use } from "react";
 import getUserVersions from "../hooks/useGetUserVersions"; 
+import getTeamVersions from "../hooks/useGetTeamVersions";
 import useGetAllPendingVersions from "../hooks/useGetAllPendingVersions";
 import { getUser } from "../utils/auth";
 import { FileTerminal } from "lucide-react";
@@ -17,6 +18,7 @@ export default function Versions({
     const [searchResult, setSearchResult] = useState("");
     const [pendingVersions, setPendingVersions] = useState([]);
     const allPendingVersions = useGetAllPendingVersions();
+    const [allTeamVersions, setAllTeamVersions] = useState([]);
 
     // Зареждане на данните при монтиране
     useEffect(() => {
@@ -25,6 +27,7 @@ export default function Versions({
             const userVersionArray = await getUserVersions("all");
             setPendingVersions(await useGetAllPendingVersions());
             setAllUserVersions(userVersionArray);
+            setAllTeamVersions(await getTeamVersions());
             setIsLoading(false);
         };
         loadData();
@@ -51,13 +54,23 @@ export default function Versions({
     
 
     let filteredVersions = functionality !== "" ?
+        functionality == "Team" ? 
+            !searchResult ? versionsPage :
+            allTeamVersions.filter(version => {
+            if (!searchResult) return true;
+            const searchLower = searchResult.toLowerCase();
+            return (
+                version.title?.toLowerCase().includes(searchLower) || 
+                version.id?.toString() === searchResult
+            );
+        }) :
         functionality == "Review" ? 
             !searchResult ? versionsPage :
             pendingVersions.filter(version => {
             if (!searchResult) return true;
             const searchLower = searchResult.toLowerCase();
             return (
-                version.content?.toLowerCase().includes(searchLower) || 
+                version.title?.toLowerCase().includes(searchLower) || 
                 version.id?.toString() === searchResult
             );
         })
@@ -65,7 +78,7 @@ export default function Versions({
             if (!searchResult) return true;
             const searchLower = searchResult.toLowerCase();
             return (
-                version.content?.toLowerCase().includes(searchLower) || 
+                version.title?.toLowerCase().includes(searchLower) || 
                 version.id?.toString() === searchResult
             );
         }) : null;
