@@ -1,22 +1,25 @@
-import { getUser, getToken } from "../utils/auth";
+import { getUser, getToken, logout } from "../utils/auth";
 
 export default async function getUserVersions(whichDocuments) {
     const user = getUser();
     const token = getToken();
-    console.log("HELLO")
+    console.log("HELLO");
     console.log(user);
 
     try {
-        const res = await fetch(`/api/v1/users/${user.id}/versions`, {
+        const response = await fetch(`/api/v1/users/${user.id}/versions`, {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            }
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
         });
+        if (response.status === 403) {
+            logout();
+            window.location.href = "/login";
+        }
+        if (!response.ok) throw new Error("Failed to fetch history");
 
-        if (!res.ok) throw new Error("Failed to fetch history");
-
-        const data = await res.json();
+        const data = await response.json();
         console.log(data);
         return data;
     } catch (error) {

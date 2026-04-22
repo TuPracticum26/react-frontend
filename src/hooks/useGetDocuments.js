@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getToken } from "../utils/auth";
+import { getToken, logout } from "../utils/auth";
 
 export default function useGetDocuments() {
     const [documents, setDocuments] = useState([]);
@@ -23,7 +23,10 @@ export default function useGetDocuments() {
                         "Content-Type": "application/json",
                     },
                 });
-
+                if (response.status === 403) {
+                    logout();
+                    window.location.href = "/login";
+                }
                 if (!response.ok) throw new Error(`Error: ${response.status}`);
 
                 const data = await response.json();
