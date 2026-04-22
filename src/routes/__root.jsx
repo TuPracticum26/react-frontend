@@ -13,18 +13,15 @@ import NotFoundImage from "../../public/Not_Found.png";
 import { isAuthenticated } from "../utils/auth"; 
 
 export const Route = createRootRoute({
-    // Можеш да добавиш проверка преди зареждане на всеки под-маршрут
     beforeLoad: ({ location }) => {
         const isAuth = isAuthenticated();
-        // Ако потребителят не е логнат и се опитва да достъпи нещо различно от началната страница
-        if (!isAuth && location.pathname !== '/') {
-            // Тук може да се добави логика за redirect, ако е необходимо
+        if (!isAuth && location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/register') {
+            window.location.href = "/login";
         }
     },
     component: () => {
         const isAuth = isAuthenticated();
 
-        // Ако потребителят НЕ е логнат, показваме Home компонента (Landing/Login/Register)
         if (!isAuth) {
             return (
                 <>
@@ -37,14 +34,12 @@ export const Route = createRootRoute({
             );
         }
 
-        // Ако потребителят Е логнат, показваме пълната структура на приложението
         return (
             <div className={rootStyles["app-container"]}>
                 <Header />
                 <div className={rootStyles.body}>
                     <Sidebar />
                     <main className={rootStyles["content-outlet"]}>
-                        {/* Radix UI Theme обгръща Outlet-а, където се зарежда DocumentView */}
                         <Theme accentColor="blue" radius="large">
                             <Outlet />
                         </Theme>
