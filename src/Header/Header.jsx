@@ -52,7 +52,7 @@ export default function Header() {
                         <Link to="/manageUsers" className="RouterLink">Manage Users</Link>
                     </h3>
                 )}
-                {user?.roles?.includes("REVIEWER") && (
+                {user?.roles?.includes("REVIEWER") || user?.roles?.includes("ADMIN") && (
                     <h3 className={HeaderStyles["header-link"]}>
                         <Link to="/versions/pendingReview" className="RouterLink">Review Versions</Link>
                     </h3>
