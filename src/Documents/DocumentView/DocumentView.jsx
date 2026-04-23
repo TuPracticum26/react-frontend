@@ -98,7 +98,7 @@ const DocumentView = () => {
                             <div className={DocumentViewStyles["meta-item"]}><User size={16} /> <strong>{displayData.author}</strong></div>
                             <div className={DocumentViewStyles["meta-item"]}><Calendar size={16} /> {new Date(displayData.date).toLocaleDateString('bg-BG')}</div>
                         </div>
-                        {user?.roles?.includes("REVIEWER") && displayData.status === 'PENDING' && (
+                        {user?.roles?.includes("REVIEWER") || user?.roles?.includes("ADMIN") && displayData.status === 'PENDING' && (
                         <div className={DocumentViewStyles["reviewer-actions"]}>
                             <button onClick={() => {documentService.approveVersion(displayData.documentId, displayData.versionNum); window.location.reload() }} className={`${DocumentViewStyles["reviewer-actions-approve-btn"]} ${DocumentViewStyles["reviewer-btn"]}`}>Approve</button>
                             <button onClick={() => {documentService.rejectVersion(displayData.documentId, displayData.versionNum); window.location.reload()}} className={`${DocumentViewStyles["reviewer-actions-reject-btn"]} ${DocumentViewStyles["reviewer-btn"]}`}>Reject</button>
