@@ -37,6 +37,7 @@ function UserCard({ id, username, roles }) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem("auth"))?.token || ""}`,
             },
             body: JSON.stringify(rolesArray),
         })
@@ -53,6 +54,10 @@ function UserCard({ id, username, roles }) {
     async function deleteUser() {
         await fetch(`/api/v1/admin/deleteUser/${id}`, {
             method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${JSON.parse(localStorage.getItem("auth"))?.token || ""}`,
+            },
         })
             .then((response) => {
                 if (!response.ok) {
