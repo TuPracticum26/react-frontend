@@ -1,20 +1,21 @@
-import { createFileRoute } from '@tanstack/react-router'
-import getTeamVersionsPage from '../../api/getTeamVersionsPage';
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import rootStyles from '../root.module.css'
-import { Skeleton, Flex, Text } from '@radix-ui/themes';
-import Versions from '../../Versions/Versions';
+import { createLazyFileRoute } from "@tanstack/react-router";
+import Versions from "../../Versions/Versions";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import rootStyles from "../root.module.css";
+import { Flex, Skeleton, Text } from "@radix-ui/themes";
+import getVersionsPage from "../../api/getVersionsPage";
 
-export const Route = createFileRoute('/versions/team')({
-  component: ManageTeamVersions,
-})
+export const Route = createLazyFileRoute("/versions/")({
+    component: ManageVersions,
+});
 
-function ManageTeamVersions() {
+function ManageVersions() {
+    const token = JSON.parse(localStorage.getItem("auth")).user;
     const [page, setPage] = useState(0);
     const { isLoading, data } = useQuery({
-        queryKey: ["team-versions", page],
-        queryFn: () => getTeamVersionsPage(page),
+        queryKey: ["versions", page],
+        queryFn: () => getVersionsPage(token.id, page),
         staleTime: 10000,
     });
     let arrayOfTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -38,7 +39,7 @@ function ManageTeamVersions() {
 
     return (
         <>
-            <Versions versionsPage={data} page={page} setPage={setPage} functionality="Team"/>
+            <Versions versionsPage={data} page={page} setPage={setPage} />
         </>
     );
 }

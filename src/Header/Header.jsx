@@ -9,7 +9,6 @@ export default function Header() {
     const user = getUser();
     const navigate = useNavigate();
     
-    // КОРЕКЦИЯ: Деструктурираме, за да вземем масива от обекта
     const { documents } = useGetDocuments();
     const allDocuments = documents || []; 
     
@@ -51,6 +50,11 @@ export default function Header() {
                 {user?.roles?.includes("ADMIN") && (
                     <h3 className={HeaderStyles["header-link"]}>
                         <Link to="/manageUsers" className="RouterLink">Manage Users</Link>
+                    </h3>
+                )}
+                {user?.roles?.includes("REVIEWER") && (
+                    <h3 className={HeaderStyles["header-link"]}>
+                        <Link to="/versions/pendingReview" className="RouterLink">Review Versions</Link>
                     </h3>
                 )}
             </div>

@@ -8,6 +8,11 @@
   --secondary-color-soft: rgb(241, 243, 254);
   --hover-color: rgb(220, 226, 247);
 
+  --approve-bg-color: #acf4be;
+  --approve-text-color: #166534;
+  --reject-bg-color: #f9dbd7;
+  --reject-text-color: #7f1d1d;
+
   --default-button: rgb(22, 60, 120);
   --delete-button: rgb(171, 45, 37);
 }

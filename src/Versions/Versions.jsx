@@ -1,37 +1,39 @@
 import VersionsStyles from "./Versions.module.css";
 import Task from "../Task/Task";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import getUserVersions from "../hooks/useGetUserVersions"; 
+import getTeamVersions from "../hooks/useGetTeamVersions";
+import useGetAllPendingVersions from "../hooks/useGetAllPendingVersions";
 import { getUser } from "../utils/auth";
+import { FileTerminal } from "lucide-react";
 
 export default function Versions({
-    versionsPage = [], // Данни от родителя (ако има такива)
+    versionsPage = [],
     page = 0,
     setPage = () => {},
     functionality,
-    docId // Трябва да подадеш docId на този компонент
 }) {
     const [allUserVersions, setAllUserVersions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [searchResult, setSearchResult] = useState("");
+    const [pendingVersions, setPendingVersions] = useState([]);
+    const allPendingVersions = useGetAllPendingVersions();
+    const [allTeamVersions, setAllTeamVersions] = useState([]);
 
     // Зареждане на данните при монтиране
     useEffect(() => {
         const loadData = async () => {
             setIsLoading(true);
             const userVersionArray = await getUserVersions("all");
+            setPendingVersions(await useGetAllPendingVersions());
             setAllUserVersions(userVersionArray);
+            setAllTeamVersions(await getTeamVersions());
             setIsLoading(false);
         };
         loadData();
     }, []);
 
-    useEffect(() => {
-            console.log(allUserVersions)
-    }, [allUserVersions])
-
-    // Логика за филтриране
-    let displayedVersions = allUserVersions;
+    let displayedVersions = functionality === "Review" ? versionsPage : allUserVersions;
 
     if (functionality) {
         if (functionality === "Team") {
@@ -49,16 +51,37 @@ export default function Versions({
             }
         }
     }
+    
 
-    // Прилагане на търсенето
-    const filteredVersions = displayedVersions.filter(version => {
-        if (!searchResult) return true;
-        const searchLower = searchResult.toLowerCase();
-        return (
-            version.content?.toLowerCase().includes(searchLower) || 
-            version.id?.toString() === searchResult
-        );
-    });
+    let filteredVersions = functionality !== "" ?
+        functionality == "Team" ? 
+            !searchResult ? versionsPage :
+            allTeamVersions.filter(version => {
+            if (!searchResult) return true;
+            const searchLower = searchResult.toLowerCase();
+            return (
+                version.title?.toLowerCase().includes(searchLower) || 
+                version.id?.toString() === searchResult
+            );
+        }) :
+        functionality == "Review" ? 
+            !searchResult ? versionsPage :
+            pendingVersions.filter(version => {
+            if (!searchResult) return true;
+            const searchLower = searchResult.toLowerCase();
+            return (
+                version.title?.toLowerCase().includes(searchLower) || 
+                version.id?.toString() === searchResult
+            );
+        })
+        : displayedVersions.filter(version => {
+            if (!searchResult) return true;
+            const searchLower = searchResult.toLowerCase();
+            return (
+                version.title?.toLowerCase().includes(searchLower) || 
+                version.id?.toString() === searchResult
+            );
+        }) : null;
 
     if (isLoading) return <div className="loading">Loading versions...</div>;
 
@@ -75,7 +98,7 @@ export default function Versions({
             />
 
             <div className={VersionsStyles["version-card-container"]}>
-                {filteredVersions.length > 0 ? (
+                {filteredVersions?.length?? 0 > 0 ? (
                     filteredVersions.map((version) => (
                         <Task version={version} key={version.id} />
                     ))
@@ -84,8 +107,7 @@ export default function Versions({
                 )}
             </div>
 
-            {/* Пагинация само за Team секцията */}
-            {searchResult === "" && functionality === "Team" && (
+            {searchResult === "" && (functionality === "Team" || functionality === "Review") && (
                 <div className={VersionsStyles["page-buttons-container"]}>
                     <button
                         disabled={page <= 0}

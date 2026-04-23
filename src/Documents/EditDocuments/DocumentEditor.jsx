@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
-import TiptapEditor from "./TiptapEditor";
-import DocumentsStyles from "./Documents.module.css";
-import useGetDocument from "../hooks/useGetDocument";
-import useUpdateDocument from "../hooks/useUpdateDocument";
+import TiptapEditor from "./TipTapEditor";
+import DocumentsStyles from "../Documents.module.css";
+import useGetDocument from "../../hooks/useGetDocument";
+import useUpdateDocument from "../../hooks/useUpdateDocument";
 
 // Импортираме функциите от твоя auth.js файл
-import { getToken, isAuthenticated } from "../utils/auth"; 
+import { getToken, isAuthenticated } from "../../utils/auth"; 
 
 export default function DocumentEditor() {
     // ВАЖНО: Увери се, че параметърът тук съвпада с дефиницията в маршрута ($documentId или $docId)

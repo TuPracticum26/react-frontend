@@ -1,11 +1,11 @@
 import { getUser, getToken, logout } from "../utils/auth";
 
-export default async function getUserVersions(whichDocuments) {
+export default async function getTeamVersions() {
     const user = getUser();
     const token = getToken();
 
     try {
-        const response = await fetch(`/api/v1/users/${user.id}/versions`, {
+        const response = await fetch(`/api/v1/users/versions/`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
@@ -21,6 +21,5 @@ export default async function getUserVersions(whichDocuments) {
         return data;
     } catch (error) {
         console.error("Error in getUserVersions:", error);
-        return { userVersionArray: [], allVersionArray: [] };
     }
 }

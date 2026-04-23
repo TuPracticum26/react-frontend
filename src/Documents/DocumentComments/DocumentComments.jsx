@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { documentService } from '../services/documentService';
+import { documentService } from '../../services/documentService';
 import { Send, MessageSquare, AlertCircle } from 'lucide-react';
-import './DocumentView.css';
+import DocumentViewStyles from '../DocumentView/DocumentView.module.css';
 
 const DocumentComments = ({ docId, versionDbId, initialComments = [], versionNumber }) => {
     const [comments, setComments] = useState([]);
@@ -33,28 +33,28 @@ const DocumentComments = ({ docId, versionDbId, initialComments = [], versionNum
     };
 
     return (
-        <div className="comments-section">
-            <div className="comments-header">
+        <div className={DocumentViewStyles["comments-section"]}>
+            <div className={DocumentViewStyles["comments-header"]}>
                 <MessageSquare size={20} />
                 <h3>Comments ({comments.length}) on Version {versionNumber}</h3>
             </div>
 
-            {error && <div className="comment-error"><AlertCircle size={16} /> {error}</div>}
+            {error && <div className={DocumentViewStyles["comment-error"]}><AlertCircle size={16} /> {error}</div>}
 
-            <div className="comments-list">
+            <div className={DocumentViewStyles["comments-list"]}>
                 {comments.map((c, idx) => {
                     // Гъвкава логика за текст: ако c е обект, взима .comment, ако е низ - взима него
                     const text = typeof c === 'object' ? (c.comment || c.text) : c;
                     return (
-                        <div key={idx} className="comment-card">
+                        <div key={idx} className={DocumentViewStyles["comment-card"]}>
                             
-                            <p className="comment-text">{text}</p>
+                            <p className={DocumentViewStyles["comment-text"]}>{text}</p>
                         </div>
                     );
                 })}
             </div>
 
-            <form className="comment-form" onSubmit={handleSubmit}>
+            <form className={DocumentViewStyles["comment-form"]} onSubmit={handleSubmit}>
                 <textarea 
                     value={newComment} 
                     onChange={(e) => setNewComment(e.target.value)}

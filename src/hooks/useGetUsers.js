@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, logout } from "react";
 
 export default function useGetUsers() {
     const [users, setUsers] = useState([]);
@@ -20,6 +20,10 @@ export default function useGetUsers() {
                         "Content-Type": "application/json",
                     },
                 });
+                if (response.status === 403) {
+                    logout();
+                    window.location.href = "/login";
+                }
 
                 if (!response.ok) {
                     const text = await response.text();
