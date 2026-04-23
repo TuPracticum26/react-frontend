@@ -113,7 +113,7 @@ const DocumentView = () => {
                         <DocumentComments 
                             key={displayData.versionNum} 
                             docId={docId}
-                            versionDbId={displayData.versionNum} // Използваме номера за по-добра съвместимост с контролера
+                            versionDbId={displayData.versionNum}
                             initialComments={currentVersion.comments || []}
                             versionNumber={displayData.versionNum}
                         />

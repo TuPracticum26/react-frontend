@@ -81,7 +81,7 @@ export default function Header() {
                         </div>
                     )}
                 </div>
-                <button className={HeaderStyles["upload-btn"]}>Upload</button>
+                <button className={HeaderStyles["upload-btn"]} onClick={() => navigate({ to: `/createDocument` })}>Upload</button>
                 
                 <div className={HeaderStyles["profile-pic"]} onClick={toggleMenu} tabIndex="0">
                     <UserRoundPen size={32} className={HeaderStyles["profile-pic-icon"]} />

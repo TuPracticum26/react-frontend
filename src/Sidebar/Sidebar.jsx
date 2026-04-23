@@ -13,11 +13,8 @@ import { getUser } from "../utils/auth";
 import { ssrDynamicImportKey } from "vite/module-runner";
 
 export default function Sidebar() {
-    // 1. Използваме сигурната функция. Ако няма потребител, тя връща null.
     const user = getUser();
 
-    // 2. Дефинираме ролите безопасно. 
-    // Ако user е null, приемаме празен масив, за да не гърми .includes()
     const userRoles = user?.roles || [];
 
     return (
@@ -49,7 +46,6 @@ export default function Sidebar() {
                         </div>
                     </Link>
 
-                    {/* 3. Проверка чрез новата променлива userRoles */}
                     {!userRoles.includes("READER") ? (
                         <>
                             <Link
@@ -65,19 +61,22 @@ export default function Sidebar() {
                                     </h2>
                                 </div>
                             </Link>
-                            <Link
-                                to="/versions/team"
-                                className={SidebarStyles["document-links"]}
-                            >
-                                <div className={SidebarStyles["link"]}>
-                                    <h2>
-                                        <Users
-                                            className={SidebarStyles.icon}
-                                        />{" "}
-                                        &nbsp; Team Versions
-                                    </h2>
-                                </div>
-                            </Link>
+                        </>
+                    ) : null}
+
+                    <Link
+                        to="/versions/team"
+                        className={SidebarStyles["document-links"]}
+                    >
+                        <div className={SidebarStyles["link"]}>
+                            <h2>
+                                <Users className={SidebarStyles.icon} /> &nbsp;
+                                Team Versions
+                            </h2>
+                        </div>
+                    </Link>
+                    {!userRoles.includes("READER") ? (
+                        <>
                             <Link
                                 to="/versions/drafts"
                                 className={SidebarStyles["document-links"]}

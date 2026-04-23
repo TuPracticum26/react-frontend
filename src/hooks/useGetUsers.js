@@ -22,6 +22,7 @@ export default function useGetUsers() {
                 });
                 if (response.status === 403) {
                     logout();
+                    alert("Your session has expired. Please log in again.");
                     window.location.href = "/login";
                 }
 

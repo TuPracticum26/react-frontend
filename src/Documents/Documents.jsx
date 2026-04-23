@@ -14,6 +14,7 @@ export default function Documents() {
 
     useEffect(() => {
         if (!token) {
+            alert("You must be logged in to view documents.");
             navigate({ to: "/login" });
         }
     }, [token, navigate]);
@@ -47,7 +48,6 @@ export default function Documents() {
             <h1>All Documents</h1>
             <div className={DocumentsStyles["documents-container"]}>
                 {documents.map((document) => (
-                    /* КОРЕКЦИЯ ТУК: Използваме обекти за 'to' и 'params' */
                     <Link
                         to="/documents/$docId"
                         params={{ docId: document.id.toString() }}

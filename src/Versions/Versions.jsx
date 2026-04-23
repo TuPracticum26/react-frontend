@@ -20,20 +20,18 @@ export default function Versions({
     const allPendingVersions = useGetAllPendingVersions();
     const [allTeamVersions, setAllTeamVersions] = useState([]);
 
-    // Зареждане на данните при монтиране
     useEffect(() => {
         const loadData = async () => {
             setIsLoading(true);
             const userVersionArray = await getUserVersions("all");
-            setPendingVersions(await useGetAllPendingVersions());
+            functionality && functionality === "Review" && setPendingVersions(await useGetAllPendingVersions());
             setAllUserVersions(userVersionArray);
-            setAllTeamVersions(await getTeamVersions());
             setIsLoading(false);
         };
         loadData();
     }, []);
 
-    let displayedVersions = functionality === "Review" ? versionsPage : allUserVersions;
+    let displayedVersions = functionality === "Review" ? versionsPage : allUserVersions ?? ["no versions"];
 
     if (functionality) {
         if (functionality === "Team") {
@@ -47,7 +45,9 @@ export default function Versions({
             };
             const targetStatus = statusMap[functionality];
             if (targetStatus) {
-                displayedVersions = allUserVersions.filter(v => v.status === targetStatus);
+                if (allUserVersions) {
+                    displayedVersions = allUserVersions.filter(v => v.status === targetStatus);
+                }
             }
         }
     }

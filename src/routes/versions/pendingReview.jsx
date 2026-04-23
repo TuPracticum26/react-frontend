@@ -14,7 +14,7 @@ function ManagePendingReviewVersions() {
     const { isLoading, data } = useQuery({
         queryKey: ["pending-review-versions", page],
         queryFn: () => getAllPendingVersionsPage(page),
-        staleTime: 10000,
+        staleTime: 30000,
     });
     let arrayOfTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     if (isLoading) {

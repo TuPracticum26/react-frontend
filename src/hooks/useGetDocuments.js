@@ -25,13 +25,13 @@ export default function useGetDocuments() {
                 });
                 if (response.status === 403) {
                     logout();
+                    alert("Your session has expired. Please log in again.");
                     window.location.href = "/login";
                 }
                 if (!response.ok) throw new Error(`Error: ${response.status}`);
 
                 const data = await response.json();
                 
-                // Проверка за формат на данните (масив или Spring Boot Page)
                 if (Array.isArray(data)) {
                     setDocuments(data);
                 } else if (data?.content && Array.isArray(data.content)) {

@@ -67,7 +67,6 @@ export const documentService = {
 
     // ДОБАВЯНЕ НА КОМЕНТАР
     addComment: async (docId, versionNum, commentData) => {
-        // Използваме versionNum в URL-а, за да съвпадне с логиката на контролера
         const response = await fetch(`${API_URL}/${docId}/versions/${versionNum}/comments`, {
             method: "POST",
             headers: getHeaders(),

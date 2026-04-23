@@ -18,7 +18,6 @@ const MenuBar = ({ editor }) => {
 
   return (
     <div className={EditDocumentsStyles["menu-bar"]}>
-      {/* --- ЗАГЛАВИЯ --- */}
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -43,7 +42,6 @@ const MenuBar = ({ editor }) => {
 
       <div className={EditDocumentsStyles["separator"]}></div>
 
-      {/* --- ОСНОВНИ СТИЛОВЕ --- */}
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -62,7 +60,6 @@ const MenuBar = ({ editor }) => {
 
       <div className={EditDocumentsStyles["separator"]}></div>
 
-      {/* --- СПИСЪЦИ --- */}
       <button 
         type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}

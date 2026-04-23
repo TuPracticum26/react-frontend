@@ -55,13 +55,11 @@ export default function Dashboard() {
             const userVers = [];
 
             histories.forEach(data => {
-                // data тук е обект от тип DocumentHistoryDTO (съдържа documentTitle и versions)
                 if (data && data.versions) {
                     data.versions.forEach(v => {
-                        // КЛЮЧОВО: Добавяме заглавието на документа към обекта на версията
                         const enhancedVersion = {
                             ...v,
-                            documentTitle: data.documentTitle // Вземаме го от DTO-то
+                            documentTitle: data.documentTitle 
                         };
 
                         allVers.push(enhancedVersion);
@@ -127,16 +125,17 @@ export default function Dashboard() {
                         </div>
                     </HeroCard>
                 </Link>
-
-                <HeroCard 
-                    title="Latest Change" 
-                    number={latestChange?.createdAt ? new Date(latestChange.createdAt).toLocaleDateString() : "N/A"}
-                    content={latestChange?.documentTitle || "No recent changes"} // Показваме заглавието тук
-                >
-                    <div className={DashboardStyles["hero-card-icon"]} style={{ backgroundColor: "#f9f5d7" }}>
-                        <ClockArrowUp size="40px" color="#867315" />
-                    </div>
-                </HeroCard>
+                <Link to={`/documents/${latestChange?.documentId ?? 0}/versions/${latestChange?.versionNumber ?? 0}`}>
+                    <HeroCard 
+                        title="Latest Change" 
+                        number={latestChange?.createdAt ? new Date(latestChange.createdAt).toLocaleDateString() : "N/A"}
+                        content={latestChange?.documentTitle || "No recent changes"} // Показваме заглавието тук
+                        >
+                        <div className={DashboardStyles["hero-card-icon"]} style={{ backgroundColor: "#f9f5d7" }}>
+                            <ClockArrowUp size="40px" color="#867315" />
+                        </div>
+                    </HeroCard>
+                </Link>
             </div>
 
             <div className={DashboardStyles["personal-activity"]}>

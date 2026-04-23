@@ -13,6 +13,7 @@ export default async function getUserVersions(whichDocuments) {
         });
         if (response.status === 403) {
             logout();
+            alert("Your session has expired. Please log in again.");
             window.location.href = "/login";
         }
         if (!response.ok) throw new Error("Failed to fetch history");

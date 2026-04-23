@@ -43,7 +43,6 @@ const DocumentComments = ({ docId, versionDbId, initialComments = [], versionNum
 
             <div className={DocumentViewStyles["comments-list"]}>
                 {comments.map((c, idx) => {
-                    // Гъвкава логика за текст: ако c е обект, взима .comment, ако е низ - взима него
                     const text = typeof c === 'object' ? (c.comment || c.text) : c;
                     return (
                         <div key={idx} className={DocumentViewStyles["comment-card"]}>

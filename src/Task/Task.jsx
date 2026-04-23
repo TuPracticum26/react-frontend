@@ -6,7 +6,6 @@ export default function Task({ version }) {
     const TITLE_WIDTH = 60;
     const NAME_WIDTH = 25;
 
-    // Вземаме заглавието, което Dashboard.jsx инжектира директно във версията
     const displayTitle = version.title || "Untitled Document";
 
     return (

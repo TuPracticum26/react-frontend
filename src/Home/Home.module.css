@@ -1,0 +1,64 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    padding: 2rem;
+}
+
+.home-content-container {
+    max-width: 400px;
+}
+
+.label {
+    font-size: 14px;
+    color: #555;
+    margin-top: 1rem;
+}
+
+.login-btn {
+    color: #4f64dc;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.welcome-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-heading-1 {
+    color: var(--logo-color);
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.logo-heading-2 {
+    font-weight: 400;
+    color: #555;
+    max-width: 600px;
+}
+
+.image-container {
+    background-color: var(--secondary-color-soft);
+    border-radius: 50%;
+    width: 550px;
+    height: 550px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.home-image {
+    max-width: 400px;
+    height: auto;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+}

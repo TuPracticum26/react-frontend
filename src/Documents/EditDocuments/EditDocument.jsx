@@ -7,7 +7,7 @@ import { documentService } from '../../services/documentService';
 import EditDocumentsStyles from './EditorStyles.module.css';
 
 const EditDocument = () => {
-    const tokenData = localStorage.getItem("token");
+    const tokenData = localStorage.getItem("auth");
     const userData = tokenData ? JSON.parse(tokenData) : null;
     const token = userData?.token;
 
@@ -22,6 +22,7 @@ const EditDocument = () => {
 
     useEffect(() => {
         if (!token) {
+            alert("You must be logged in to edit documents.");
             navigate({ to: '/login' });
         }
     }, [token]);
@@ -139,10 +140,7 @@ const EditDocument = () => {
             setError('Моля, въведете съдържание');
             return;
         }
-
-        // setIsLoading(true);
         setError('');
-        //createNewVersion: async (docId, verId, title, content)
         try {
             const docHistory = await documentService.getDocumentHistory(docId);
             const newVersionId = docHistory.versions.length + 1;

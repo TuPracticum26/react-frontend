@@ -5,32 +5,27 @@ import DocumentsStyles from "../Documents.module.css";
 import useGetDocument from "../../hooks/useGetDocument";
 import useUpdateDocument from "../../hooks/useUpdateDocument";
 
-// Импортираме функциите от твоя auth.js файл
 import { getToken, isAuthenticated } from "../../utils/auth"; 
 
 export default function DocumentEditor() {
-    // ВАЖНО: Увери се, че параметърът тук съвпада с дефиницията в маршрута ($documentId или $docId)
     const { documentId } = useParams({ from: "/documents/$documentId" });
     const navigate = useNavigate();
 
-    // 1. Използваме готовата функция от auth.js
     const token = getToken();
 
-    // 2. Подаваме токена на хуковете
     const { document, loading, error } = useGetDocument(documentId, token);
     const { updateDocument, isUpdating } = useUpdateDocument(token);
 
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
 
-    // 3. Защита: Използваме isAuthenticated() за проверка
     useEffect(() => {
         if (!isAuthenticated()) {
+            alert("You must be logged in to edit documents.");
             navigate({ to: "/login" });
         }
     }, [navigate]);
 
-    // Зареждане на данните в стейта
     useEffect(() => {
         if (document) {
             setContent(document.content || "");
@@ -41,7 +36,6 @@ export default function DocumentEditor() {
     const handleContentChange = (newContent) => {
         setContent(newContent);
 
-        // Debounce за автоматично запазване
         if (window.contentTimeout) clearTimeout(window.contentTimeout);
         window.contentTimeout = setTimeout(() => {
             if (isAuthenticated()) {
@@ -66,7 +60,6 @@ export default function DocumentEditor() {
         navigate({ to: "/documents" });
     };
 
-    // Ако не е логнат, не рендерваме нищо докато трае useEffect пренасочването
     if (!isAuthenticated()) return null;
     
     if (loading) {

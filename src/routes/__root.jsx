@@ -16,6 +16,7 @@ export const Route = createRootRoute({
     beforeLoad: ({ location }) => {
         const isAuth = isAuthenticated();
         if (!isAuth && location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/register') {
+            alert("You must be logged in to access this page.");
             window.location.href = "/login";
         }
     },
