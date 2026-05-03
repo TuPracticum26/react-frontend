@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -87,6 +87,26 @@ export default function Register() {
                     <button style={buttonStyle} type="submit">
                         Register
                     </button>
+                    <p
+                        style={{
+                            fontSize: "14px",
+                            color: "#555",
+                            marginTop: "1.5rem",
+                            textAlign: "center",
+                        }}
+                    >
+                        Already have an account?{" "}
+                        <Link
+                            to="/login"
+                            style={{
+                                color: "#4f64dc",
+                                textDecoration: "none",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Login here.
+                        </Link>
+                    </p>
                 </form>
             </div>
         </div>
